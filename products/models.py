@@ -1,4 +1,8 @@
 from django.db import models
+from django.shortcuts import (
+    render,
+    get_object_or_404,
+)
 
 class Category(models.Model):
     name = models.CharField(
@@ -159,3 +163,27 @@ class ProductImage(models.Model):
         return f"{self.product.name} Image"
     
 
+def category_products(request, slug):
+
+    category = get_object_or_404(
+        Category,
+        slug=slug
+    )
+
+    categories = Category.objects.all()
+
+    products = Product.objects.filter(
+        category=category,
+        status="published"
+    )
+
+    return render(
+        request,
+        "product/product_list.html",
+        {
+            "products": products,
+            "category": category,
+            "categories": categories,
+
+        }
+    )

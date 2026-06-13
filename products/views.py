@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from wishlist.models import Wishlist
-
-from .models import Product
+from django.db.models import Q
+from .models import Category, Product
 
 
 def product_list(request):
@@ -51,5 +51,36 @@ def product_detail(request, slug):
     return render(
         request,
         "product/product_detail.html",
+        context,
+    )
+
+def product_list(request):
+
+    query = request.GET.get(
+        "q",
+        ""
+    )
+
+    categories = Category.objects.all()
+
+    products = Product.objects.filter(
+        status="published"
+    )
+
+    if query:
+
+        products = products.filter(
+            Q(name__icontains=query) |Q(sku__icontains=query) |
+            Q(category__name__icontains=query) | Q(tags__name__icontains=query)).distinct()
+
+    context = {
+        "products": products,
+        "query": query,
+        "categories": categories,
+    }
+
+    return render(
+        request,
+        "product/product_list.html",
         context,
     )

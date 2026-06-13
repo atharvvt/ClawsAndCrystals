@@ -1,40 +1,191 @@
 {% extends "base.html" %}
 
-{% block title %}Shop — Claws & Crystals{% endblock %}
+{% block title %}
+{% if category %}
+{{ category.name }} — Claws & Crystals
+{% else %}
+Shop — Claws & Crystals
+{% endif %}
+{% endblock %}
 
 {% block content %}
 
-<section class="pt-20 pb-6 px-6 text-center bg-cream">
-    <span class="section-eyebrow">Explore</span>
-    <h1 class="font-serif text-5xl md:text-6xl font-semibold text-brown mt-2">Our Collection</h1>
-    <p class="text-muted mt-4 font-light max-w-md mx-auto">Every piece, a testament to India's timeless artistry.</p>
+<!-- Hero -->
+
+<section class="pt-20 pb-10 px-6 text-center bg-cream">
+
+    ```
+    {% if category %}
+
+    <span class="section-eyebrow">
+        Category
+    </span>
+
+    <h1 class="font-serif text-5xl md:text-6xl font-semibold text-brown mt-2">
+        {{ category.name }}
+    </h1>
+
+    {% if category.description %}
+    <p class="text-muted mt-4 font-light max-w-2xl mx-auto">
+        {{ category.description }}
+    </p>
+    {% endif %}
+
+    {% else %}
+
+    <span class="section-eyebrow">
+        Explore
+    </span>
+
+    <h1 class="font-serif text-5xl md:text-6xl font-semibold text-brown mt-2">
+        Our Collection
+    </h1>
+
+    <p class="text-muted mt-4 font-light max-w-md mx-auto">
+        Every piece, a testament to India's timeless artistry.
+    </p>
+
+    {% endif %}
+    ```
+
 </section>
 
-<section class="py-16 px-6 bg-cream min-h-screen">
+<!-- Product Listing -->
+
+<section class="pb-20 px-6 bg-cream min-h-screen">
+
+    ```
     <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+        <!-- Search Results -->
+
+        {% if query %}
+
+        <div class="text-center mb-8">
+
+            <p class="text-muted">
+
+                Showing results for
+
+                <span class="text-brown font-medium">
+                    "{{ query }}"
+                </span>
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+        <!-- Category Filters -->
+
+        <div class="flex flex-wrap justify-center gap-3 mb-12">
+
+            <a href="{% url 'product_list' %}"
+                class="glass-card px-5 py-2 text-sm text-brown hover:text-gold transition-colors">
+                All
+            </a>
+
+            {% for category_item in categories %}
+
+            <a href="{% url 'category_products' category_item.slug %}"
+                class="glass-card px-5 py-2 text-sm text-brown hover:text-gold transition-colors">
+                {{ category_item.name }}
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- Products Grid -->
+
+        {% if products %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
             {% for product in products %}
+
             <a href="{% url 'product_detail' product.slug %}" class="product-card group">
+
                 <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 bg-blush">
-                    {% if product.images.first %}
-                    <img src="{{ product.images.first.image.url }}"
-                         alt="{{ product.name }}"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                    {% if product.primary_image %}
+
+                    <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">◈</div>
+
+                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">
+                        ◈
+                    </div>
+
                     {% endif %}
+
                 </div>
-                <p class="font-serif text-lg text-brown font-medium leading-tight">{{ product.name }}</p>
-                <p class="text-gold text-sm font-sans mt-1">₹{{ product.price }}</p>
-                <span class="inline-block mt-3 text-xs uppercase tracking-wider text-muted border-b border-muted/30 pb-px group-hover:text-gold group-hover:border-gold transition-colors duration-300">
+
+                <p class="font-serif text-lg text-brown font-medium leading-tight">
+                    {{ product.name }}
+                </p>
+
+                {% if product.discounted_price %}
+
+                <div class="mt-1 flex items-center gap-2">
+
+                    <span class="text-gold font-medium">
+                        ₹{{ product.discounted_price }}
+                    </span>
+
+                    <span class="text-muted line-through text-sm">
+                        ₹{{ product.price }}
+                    </span>
+
+                </div>
+
+                {% else %}
+
+                <p class="text-gold text-sm font-sans mt-1">
+                    ₹{{ product.price }}
+                </p>
+
+                {% endif %}
+
+                <span
+                    class="inline-block mt-3 text-xs uppercase tracking-wider text-muted border-b border-muted/30 pb-px group-hover:text-gold group-hover:border-gold transition-colors duration-300">
                     View Details →
                 </span>
+
             </a>
-            {% empty %}
-            <p class="col-span-4 text-center text-muted py-20 font-light">No products available yet. Check back soon.</p>
+
             {% endfor %}
+
         </div>
+
+        {% else %}
+
+        <!-- Empty State -->
+
+        <div class="text-center py-24">
+
+            <h3 class="font-serif text-3xl text-brown">
+                No products found
+            </h3>
+
+            <p class="text-muted mt-3">
+                Try searching with a different keyword or browse another category.
+            </p>
+
+            <a href="{% url 'product_list' %}" class="btn-primary mt-8 inline-block">
+                View All Products
+            </a>
+
+        </div>
+
+        {% endif %}
+
     </div>
+    ```
+
 </section>
 
 {% endblock %}

@@ -1,75 +1,129 @@
 <nav class="sticky top-0 z-50 border-b border-gold/20"
-    style="background: rgba(250,247,242,0.80); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+    style="background: rgba(250,247,242,0.85); backdrop-filter: blur(20px);">
 
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-6 py-4">
 
-        <!-- Logo -->
-        <a href="/"
-            class="font-serif text-2xl font-semibold tracking-wide text-brown hover:text-gold transition-colors duration-300">
-            Claws &amp; Crystals
-        </a>
+        <div class="flex items-center justify-between">
 
-        <!-- Desktop Navigation -->
-        <ul class="hidden md:flex items-center gap-8 list-none m-0 p-0">
+            <!-- Logo -->
+            <a href="/"
+                class="font-serif text-2xl font-semibold tracking-wide text-brown hover:text-gold transition-colors">
+                Claws &amp; Crystals
+            </a>
 
-            <li><a href="/" class="nav-link">Home</a></li>
+            <!-- Main Navigation -->
+            <ul class="hidden lg:flex items-center gap-8">
 
-            <li>
-                <a href="{% url 'product_list' %}" class="nav-link">
-                    Shop
+                <li>
+                    <a href="/" class="nav-link">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'product_list' %}" class="nav-link">
+                        Shop
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/about/" class="nav-link">
+                        About
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/contact/" class="nav-link">
+                        Contact
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Right Section -->
+            <div class="hidden lg:flex items-center gap-5">
+
+                <!-- Search -->
+                <form method="GET" action="{% url 'product_list' %}">
+
+                    <input type="text" name="q" placeholder="Search jewellery..." value="{{ request.GET.q }}"
+                        class="w-52 px-4 py-2 rounded-full border border-gold/20 bg-white/70 text-sm focus:outline-none focus:border-gold">
+
+                </form>
+
+                <!-- Store Actions -->
+                <a href="{% url 'wishlist' %}" class="nav-link flex items-center gap-2">
+
+                    Wishlist
+
+                    {% if wishlist_count %}
+                    <span class="bg-gold text-white text-xs px-2 py-0.5 rounded-full">
+                        {{ wishlist_count }}
+                    </span>
+                    {% endif %}
+
                 </a>
-            </li>
 
-            <li><a href="/about/" class="nav-link">About</a></li>
+                <a href="{% url 'cart' %}" class="nav-link flex items-center gap-2">
 
-            <li><a href="/contact/" class="nav-link">Contact</a></li>
+                    Cart
 
-        </ul>
+                    {% if cart_count %}
+                    <span class="bg-gold text-white text-xs px-2 py-0.5 rounded-full">
+                        {{ cart_count }}
+                    </span>
+                    {% endif %}
 
-        <!-- Right Side -->
-        <div class="hidden md:flex items-center gap-6">
+                </a>
+                <a href="{% url 'my_orders' %}" class="nav-link">
+                    Orders
+                </a>
 
-            {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated %}
 
-            <span class="text-sm text-brown">
-                Hello, {{ request.user.username }}
-            </span>
-            <a href="{% url 'logout' %}" class="nav-link">
-                Logout
-            </a>
+                <div class="flex items-center gap-3 pl-4 border-l border-gold/20">
 
-            {% else %}
+                    <span class="text-sm text-brown">
+                        {{ request.user.username }}
+                    </span>
 
-            <a href="{% url 'login' %}" class="nav-link">
-                Login
-            </a>
+                    <a href="{% url 'logout' %}" class="nav-link">
+                        Logout
+                    </a>
 
-            <a href="{% url 'register' %}" class="btn-primary">
-                Register
-            </a>
+                </div>
 
-            {% endif %}
+                {% else %}
 
-            <a href="{% url 'my_orders' %}" class="nav-link">
-                Orders
-            </a>
+                <div class="flex items-center gap-3 pl-4 border-l border-gold/20">
 
-            <a href="{% url 'wishlist' %}" class="nav-link">
-                Wishlist
-            </a>
+                    <a href="{% url 'login' %}" class="nav-link">
+                        Login
+                    </a>
 
-            <a href="{% url 'cart' %}" class="nav-link">
-                Cart
-            </a>
+                    <a href="{% url 'register' %}" class="btn-primary">
+                        Register
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Mobile Menu -->
+            <button class="lg:hidden text-brown p-2" aria-label="Open menu">
+
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+
+                </svg>
+
+            </button>
 
         </div>
-
-        <!-- Mobile Menu Button -->
-        <button class="md:hidden text-brown p-2" aria-label="Open menu">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
 
     </div>
 
