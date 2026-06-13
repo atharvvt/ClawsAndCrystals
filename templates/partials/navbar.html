@@ -49,19 +49,23 @@
             </a>
 
             {% endif %}
-            
+
+            <a href="{% url 'my_orders' %}" class="nav-link">
+                Orders
+            </a>
+
             <a href="{% url 'wishlist' %}" class="nav-link">
                 Wishlist
             </a>
-            
+
             <a href="{% url 'cart' %}" class="nav-link">
                 Cart
             </a>
-            
-            </div>
-            
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden text-brown p-2" aria-label="Open menu">
+
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-brown p-2" aria-label="Open menu">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>

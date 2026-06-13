@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16 px-6">
+
+    <div class="max-w-5xl mx-auto">
+
+        <div class="section-header mb-12">
+
+            <span class="section-eyebrow">
+                Checkout
+            </span>
+
+            <h1 class="section-title">
+                Shipping Details
+            </h1>
+
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="Full Name"
+                    required
+                    class="glass-card p-4"
+                >
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    class="glass-card p-4"
+                >
+
+                <input
+                    type="text"
+                    name="phone"
+                    placeholder="Phone Number"
+                    required
+                    class="glass-card p-4"
+                >
+
+                <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    required
+                    class="glass-card p-4"
+                >
+
+                <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    required
+                    class="glass-card p-4"
+                >
+
+                <input
+                    type="text"
+                    name="pincode"
+                    placeholder="Pincode"
+                    required
+                    class="glass-card p-4"
+                >
+
+            </div>
+
+            <textarea
+                name="address"
+                rows="4"
+                placeholder="Full Address"
+                required
+                class="glass-card p-4 w-full mt-6"
+            ></textarea>
+
+            <div class="mt-10 flex justify-between items-center">
+
+                <h2 class="text-2xl font-serif text-brown">
+                    Total: ₹{{ total }}
+                </h2>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    Place Order
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

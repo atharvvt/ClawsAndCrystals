@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Orders
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16 px-6 min-h-screen">
+
+    <div class="max-w-6xl mx-auto">
+
+        <div class="section-header mb-12">
+
+            <span class="section-eyebrow">
+                Purchase History
+            </span>
+
+            <h1 class="section-title">
+                My Orders
+            </h1>
+
+        </div>
+
+        {% if orders %}
+
+            <div class="space-y-6">
+
+                {% for order in orders %}
+
+                <a
+                    href="{% url 'order_detail' order.id %}"
+                    class="glass-card p-6 block hover:no-underline"
+                >
+
+                    <div class="flex justify-between items-center">
+
+                        <div>
+
+                            <h3 class="font-serif text-xl text-brown">
+                                Order #{{ order.id }}
+                            </h3>
+
+                            <p class="text-sm text-muted">
+                                {{ order.created_at|date:"d M Y" }}
+                            </p>
+
+                        </div>
+
+                        <div class="text-right">
+
+                            <p class="text-gold font-medium">
+                                ₹{{ order.total_amount }}
+                            </p>
+
+                            <p class="text-sm">
+                                {{ order.get_status_display }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-20">
+
+                <h3 class="font-serif text-2xl text-brown">
+                    No orders yet
+                </h3>
+
+                <p class="text-muted mt-2">
+                    Your future purchases will appear here.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

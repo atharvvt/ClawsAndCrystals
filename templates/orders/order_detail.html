@@ -1,0 +1,82 @@
+{% extends "base.html" %} {% block title %} Order #{{ order.id }} {% endblock %}
+{% block content %}
+
+<section class="py-16 px-6 min-h-screen">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-10">
+      <span class="section-eyebrow"> Order Details </span>
+
+      <h1 class="section-title">Order #{{ order.id }}</h1>
+    </div>
+
+    <!-- Order Summary -->
+
+    <div class="glass-card p-6 mb-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <p>
+            <strong>Status:</strong>
+            {{ order.get_status_display }}
+          </p>
+
+          <p>
+            <strong>Total:</strong>
+            ₹{{ order.total_amount }}
+          </p>
+
+          <p>
+            <strong>Date:</strong>
+            {{ order.created_at|date:"d M Y" }}
+          </p>
+        </div>
+
+        <div>
+          <p>
+            <strong>Name:</strong>
+            {{ order.full_name }}
+          </p>
+
+          <p>
+            <strong>Phone:</strong>
+            {{ order.phone }}
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            {{ order.email }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address -->
+
+    <div class="glass-card p-6 mb-8">
+      <h3 class="font-serif text-xl text-brown mb-4">Shipping Address</h3>
+
+      <p>{{ order.address }}</p>
+
+      <p>{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+    </div>
+
+    <!-- Items -->
+
+    <div class="glass-card p-6">
+      <h3 class="font-serif text-xl text-brown mb-6">Ordered Items</h3>
+
+      <div class="space-y-4">
+        {% for item in order.items.all %}
+
+        <div class="flex justify-between">
+          <div>{{ item.product.name }} × {{ item.quantity }}</div>
+
+          <div>₹{{ item.price }}</div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order Confirmed
+{% endblock %}
+
+{% block content %}
+
+<section class="py-24 px-6 text-center">
+
+    <div class="max-w-2xl mx-auto">
+
+        <span class="section-eyebrow">
+            Thank You
+        </span>
+
+        <h1 class="section-title">
+            Order Confirmed
+        </h1>
+
+        <p class="mt-6 text-muted">
+
+            Your order has been placed successfully.
+
+        </p>
+
+        <p class="mt-4 text-brown">
+
+            Order ID:
+            #{{ order.id }}
+
+        </p>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="btn-primary mt-8 inline-block"
+        >
+            Continue Shopping
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
