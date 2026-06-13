@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Wishlist
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16 px-6 min-h-screen">
+
+    <div class="max-w-7xl mx-auto">
+
+        <div class="section-header mb-12">
+
+            <span class="section-eyebrow">
+                Favorites
+            </span>
+
+            <h1 class="section-title">
+                My Wishlist
+            </h1>
+
+        </div>
+
+        {% if items %}
+
+        <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+            {% for item in items %}
+
+            <div class="product-card">
+
+                <a href="{% url 'product_detail' item.product.slug %}">
+
+                    {% if item.product.primary_image %}
+                    <div class="glass-card overflow-hidden">
+
+                        <img
+                            src="{{ item.product.primary_image.image.url }}"
+                            alt="{{ item.product.name }}"
+                            class="aspect-square object-cover w-full"
+                        >
+
+                    </div>
+                    {% endif %}
+
+                    <h3 class="mt-4 font-serif text-xl text-brown">
+                        {{ item.product.name }}
+                    </h3>
+
+                    <p class="text-gold">
+                        ₹{{ item.product.price }}
+                    </p>
+
+                </a>
+
+                <a
+                    href="{% url 'toggle_wishlist' item.product.id %}"
+                    class="text-sm text-red-500 mt-2 inline-block"
+                >
+                    Remove
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-20">
+
+            <h3 class="text-2xl font-serif text-brown">
+                Your wishlist is empty
+            </h3>
+
+            <p class="text-muted mt-2">
+                Save products you love and view them later.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — Claws & Crystals{% endblock %}
+
+{% block content %}
+
+<section class="py-24 px-6 bg-cream min-h-screen">
+    <div class="max-w-xl mx-auto">
+
+        <div class="text-center mb-12">
+            <span class="section-eyebrow">Get in Touch</span>
+            <h1 class="font-serif text-5xl font-semibold text-brown mt-2">We'd Love to<br>Hear from You</h1>
+        </div>
+
+        <div class="glass-card p-10">
+            <div class="space-y-6">
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-muted mb-2">Your Name</label>
+                    <input type="text" placeholder="Priya Sharma"
+                           class="w-full bg-ivory border border-blush rounded-lg px-4 py-3 text-brown placeholder-muted/40 focus:outline-none focus:border-gold transition-colors font-light">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-muted mb-2">Email Address</label>
+                    <input type="email" placeholder="priya@example.com"
+                           class="w-full bg-ivory border border-blush rounded-lg px-4 py-3 text-brown placeholder-muted/40 focus:outline-none focus:border-gold transition-colors font-light">
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-muted mb-2">Message</label>
+                    <textarea rows="5" placeholder="Tell us about your enquiry..."
+                              class="w-full bg-ivory border border-blush rounded-lg px-4 py-3 text-brown placeholder-muted/40 focus:outline-none focus:border-gold transition-colors font-light resize-none"></textarea>
+                </div>
+
+                <button class="btn-primary w-full text-center">
+                    Send Message
+                </button>
+
+            </div>
+        </div>
+
+        <p class="text-center text-muted text-sm mt-8 font-light">
+            Or email us directly at <a href="mailto:hello@clawsandcrystals.in" class="text-gold hover:underline">hello@clawsandcrystals.in</a>
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}

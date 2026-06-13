@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ product.name }} — Claws & Crystals
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16 px-6 min-h-screen">
+
+    <div class="max-w-7xl mx-auto">
+
+        <div class="grid lg:grid-cols-2 gap-14 items-start">
+
+            <!-- Product Images -->
+
+            <div>
+
+                <!-- Main Image -->
+
+                {% if product.primary_image %}
+                <div class="glass-card overflow-hidden">
+
+                    <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}"
+                        class="w-full aspect-square object-cover">
+
+                </div>
+                {% endif %}
+
+                <!-- Thumbnails -->
+
+                {% if product.images.count > 1 %}
+                <div class="grid grid-cols-4 gap-4 mt-4">
+
+                    {% for image in product.images.all %}
+
+                    <div class="glass-card overflow-hidden">
+
+                        <img src="{{ image.image.url }}" alt="{{ image.alt_text }}"
+                            class="aspect-square object-cover w-full">
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Product Info -->
+
+            <div class="lg:sticky lg:top-28">
+
+                <span class="section-eyebrow">
+                    {{ product.category.name }}
+                </span>
+
+                <h1 class="font-serif text-4xl md:text-5xl font-semibold text-brown leading-tight mt-2">
+                    {{ product.name }}
+                </h1>
+
+                <!-- Price -->
+
+                <div class="mt-6">
+
+                    {% if product.discounted_price %}
+
+                    <div class="flex items-center gap-4">
+
+                        <span class="text-3xl font-serif text-gold">
+                            ₹{{ product.discounted_price }}
+                        </span>
+
+                        <span class="text-lg text-gray-400 line-through">
+                            ₹{{ product.price }}
+                        </span>
+
+                    </div>
+
+                    {% else %}
+
+                    <span class="text-3xl font-serif text-gold">
+                        ₹{{ product.price }}
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="w-16 h-px bg-gold my-8"></div>
+
+                <!-- Description -->
+
+                <div>
+
+                    <h3 class="font-medium text-brown mb-3">
+                        Description
+                    </h3>
+
+                    <p class="text-muted leading-relaxed font-light">
+                        {{ product.description }}
+                    </p>
+
+                </div>
+
+                <!-- Product Details -->
+
+                <div class="glass-card p-6 mt-8 space-y-4">
+
+                    {% if product.material %}
+                    <div class="flex justify-between">
+                        <span class="text-muted">Material</span>
+                        <span class="text-brown">{{ product.material }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if product.weight %}
+                    <div class="flex justify-between">
+                        <span class="text-muted">Weight</span>
+                        <span class="text-brown">{{ product.weight }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="flex justify-between">
+                        <span class="text-muted">SKU</span>
+                        <span class="text-brown">{{ product.sku }}</span>
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span class="text-muted">
+                            Availability
+                        </span>
+
+                        {% if product.stock > 0 %}
+                        <span class="text-green-600">
+                            In Stock
+                        </span>
+                        {% else %}
+                        <span class="text-red-500">
+                            Out of Stock
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <!-- Tags -->
+
+                {% if product.tags.all %}
+
+                <div class="flex flex-wrap gap-2 mt-8">
+
+                    {% for tag in product.tags.all %}
+
+                    <span class="px-3 py-1 rounded-full bg-white border border-gold/20 text-sm text-brown">
+                        {{ tag.name }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endif %}
+
+                <!-- Actions -->
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-10">
+
+                    <button class="btn-primary flex-1 text-center">
+                        Add To Cart
+                    </button>
+
+                    {% if is_in_wishlist %}
+
+                    <a href="{% url 'toggle_wishlist' product.id %}" class="glass-card px-6 py-3 text-center">
+                        ♥ Saved
+                    </a>
+
+                    {% else %}
+
+                    <a href="{% url 'toggle_wishlist' product.id %}" class="glass-card px-6 py-3 text-center">
+                        ♡ Wishlist
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- Trust Section -->
+
+                <div class="glass-card p-6 mt-8 space-y-3">
+
+                    <div class="flex items-center gap-3 text-sm text-muted font-light">
+                        <span class="text-gold">✦</span>
+                        Authentic handcrafted piece
+                    </div>
+
+                    <div class="flex items-center gap-3 text-sm text-muted font-light">
+                        <span class="text-gold">✦</span>
+                        Insured nationwide delivery
+                    </div>
+
+                    <div class="flex items-center gap-3 text-sm text-muted font-light">
+                        <span class="text-gold">✦</span>
+                        7-day easy returns
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Related Products -->
+
+{% if related_products %}
+
+<section class="pb-20 px-6">
+
+    <div class="max-w-7xl mx-auto">
+
+        <div class="section-header mb-12">
+
+            <span class="section-eyebrow">
+                You May Also Like
+            </span>
+
+            <h2 class="section-title">
+                Related Products
+            </h2>
+
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            {% for item in related_products %}
+
+            <a href="{% url 'product_detail' item.slug %}" class="product-card group">
+
+                <div class="glass-card overflow-hidden">
+
+                    {% if item.primary_image %}
+
+                    <img src="{{ item.primary_image.image.url }}" alt="{{ item.name }}"
+                        class="aspect-square object-cover w-full transition-transform duration-500 group-hover:scale-105">
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mt-4">
+
+                    <p class="text-xs uppercase tracking-[0.15em] text-gold">
+                        {{ item.category.name }}
+                    </p>
+
+                    <h3 class="font-serif text-xl text-brown mt-1">
+                        {{ item.name }}
+                    </h3>
+
+                    <p class="mt-2 text-brown">
+                        ₹{{ item.price }}
+                    </p>
+
+                </div>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+{% endblock %}

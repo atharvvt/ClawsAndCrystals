@@ -1,16 +1,68 @@
-<nav>
-    <div class="container">
+<nav class="sticky top-0 z-50 border-b border-gold/20"
+    style="background: rgba(250,247,242,0.80); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
 
-        <a href="/">
-            Claws & Crystals
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        <!-- Logo -->
+        <a href="/"
+            class="font-serif text-2xl font-semibold tracking-wide text-brown hover:text-gold transition-colors duration-300">
+            Claws &amp; Crystals
         </a>
 
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/products/">Shop</a></li>
-            <li><a href="/about/">About</a></li>
-            <li><a href="/contact/">Contact</a></li>
+        <!-- Desktop Navigation -->
+        <ul class="hidden md:flex items-center gap-8 list-none m-0 p-0">
+
+            <li><a href="/" class="nav-link">Home</a></li>
+
+            <li>
+                <a href="{% url 'product_list' %}" class="nav-link">
+                    Shop
+                </a>
+            </li>
+
+            <li><a href="/about/" class="nav-link">About</a></li>
+
+            <li><a href="/contact/" class="nav-link">Contact</a></li>
+
         </ul>
 
+        <!-- Right Side -->
+        <div class="hidden md:flex items-center gap-6">
+
+            {% if request.user.is_authenticated %}
+
+            <span class="text-sm text-brown">
+                Hello, {{ request.user.username }}
+            </span>
+            <a href="{% url 'logout' %}" class="nav-link">
+                Logout
+            </a>
+
+            {% else %}
+
+            <a href="{% url 'login' %}" class="nav-link">
+                Login
+            </a>
+
+            <a href="{% url 'register' %}" class="btn-primary">
+                Register
+            </a>
+
+            {% endif %}
+
+            <a href="{% url 'wishlist' %}" class="nav-link">
+                Wishlist
+            </a>
+
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-brown p-2" aria-label="Open menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
+
     </div>
+
 </nav>

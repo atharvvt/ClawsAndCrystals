@@ -1,25 +1,209 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Home | Claws & Crystals
-{% endblock %}
+{% block title %}Claws & Crystals — Handcrafted Indian Jewellery{% endblock %}
 
 {% block content %}
 
-<section class="hero">
+<!-- ░░ HERO ░░ -->
+<section class="hero-section relative min-h-screen flex items-center justify-center text-center overflow-hidden px-6">
 
-    <h1>
-        Timeless Indian Jewellery
-    </h1>
+    <!-- ambient gold-dust glow -->
+    <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div class="w-[700px] h-[700px] rounded-full opacity-30"
+             style="background: radial-gradient(circle, #C9A84C 0%, transparent 70%); filter: blur(80px);"></div>
+    </div>
 
-    <p>
-        Traditional elegance crafted for modern women.
-    </p>
+    <div class="relative z-10 max-w-3xl mx-auto">
+        <span class="inline-block text-xs uppercase tracking-[0.25em] text-gold mb-6 font-sans font-medium">
+            Handcrafted Heritage
+        </span>
+        <h1 class="font-serif text-6xl md:text-8xl font-semibold text-brown leading-[1.1] mb-6">
+            Jewellery That<br>
+            <em class="not-italic text-gold">Tells a Story</em>
+        </h1>
+        <p class="font-sans text-muted text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-light">
+            Inspired by Indian traditions and crafted for modern elegance.
+        </p>
+        <a href="{% url 'product_list' %}" class="btn-primary">
+            Shop the Collection
+        </a>
+    </div>
 
-    <a href="/products/">
-        Explore Collection
-    </a>
+    <!-- subtle bottom fade -->
+    <div class="pointer-events-none absolute bottom-0 left-0 right-0 h-32"
+         style="background: linear-gradient(to bottom, transparent, #FAF7F2);"></div>
+</section>
 
+
+<!-- ░░ FEATURED CATEGORIES ░░ -->
+<section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="section-header">
+            <span class="section-eyebrow">Browse</span>
+            <h2 class="section-title">Featured Categories</h2>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+            {% for category in featured_categories %}
+            <a href="#" class="glass-card group flex flex-col items-center justify-center gap-3 py-10 px-6 text-center hover:border-gold/50 transition-all duration-300">
+                <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold text-xl group-hover:bg-gold/20 transition-colors">✦</div>
+                <span class="font-serif text-lg text-brown font-medium">{{ category.name }}</span>
+            </a>
+            {% empty %}
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ░░ NEW ARRIVALS ░░ -->
+<section class="py-24 px-6 bg-cream">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="section-header">
+            <span class="section-eyebrow">Just In</span>
+            <h2 class="section-title">New Arrivals</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            {% for product in new_arrivals %}
+            <a href="{% url 'product_detail' product.slug %}" class="product-card group">
+                <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 bg-blush">
+                    {% if product.images.first %}
+                    <img src="{{ product.images.first.image.url }}"
+                         alt="{{ product.name }}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">◈</div>
+                    {% endif %}
+                </div>
+                <p class="font-serif text-lg text-brown font-medium leading-tight">{{ product.name }}</p>
+                <p class="text-gold text-sm font-sans mt-1">₹{{ product.price }}</p>
+            </a>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ░░ WHY CHOOSE US ░░ -->
+<section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="section-header">
+            <span class="section-eyebrow">Our Promise</span>
+            <h2 class="section-title">Why Choose Us</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
+            {% for feature in features_list %}
+            <div class="glass-card p-8 text-center">
+                <div class="text-3xl mb-4">{{ feature.icon }}</div>
+                <p class="font-serif text-xl text-brown font-medium mb-2">{{ feature.title }}</p>
+                <p class="text-sm text-muted leading-relaxed font-light">{{ feature.desc }}</p>
+            </div>
+            {% empty %}
+            <div class="glass-card p-8 text-center">
+                <div class="text-3xl mb-4">🪡</div>
+                <p class="font-serif text-xl text-brown font-medium mb-2">Authentic Craftsmanship</p>
+                <p class="text-sm text-muted leading-relaxed font-light">Each piece made by skilled artisans with decades of tradition.</p>
+            </div>
+            <div class="glass-card p-8 text-center">
+                <div class="text-3xl mb-4">💎</div>
+                <p class="font-serif text-xl text-brown font-medium mb-2">Premium Materials</p>
+                <p class="text-sm text-muted leading-relaxed font-light">Ethically sourced stones and metals of the highest quality.</p>
+            </div>
+            <div class="glass-card p-8 text-center">
+                <div class="text-3xl mb-4">✦</div>
+                <p class="font-serif text-xl text-brown font-medium mb-2">Handpicked Designs</p>
+                <p class="text-sm text-muted leading-relaxed font-light">Every design curated to balance heritage with modern taste.</p>
+            </div>
+            <div class="glass-card p-8 text-center">
+                <div class="text-3xl mb-4">📦</div>
+                <p class="font-serif text-xl text-brown font-medium mb-2">Nationwide Delivery</p>
+                <p class="text-sm text-muted leading-relaxed font-light">Swift, insured shipping to every corner of India.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ░░ BRAND STORY ░░ -->
+<section class="py-24 px-6 bg-brown text-ivory relative overflow-hidden">
+    <!-- decorative circle -->
+    <div class="pointer-events-none absolute -right-32 -top-32 w-[500px] h-[500px] rounded-full opacity-10"
+         style="background: radial-gradient(circle, #C9A84C, transparent 70%);"></div>
+
+    <div class="max-w-3xl mx-auto text-center relative z-10">
+        <span class="inline-block text-xs uppercase tracking-[0.25em] text-gold mb-5 font-sans font-medium">Our Story</span>
+        <h2 class="font-serif text-5xl md:text-6xl font-semibold text-ivory leading-tight mb-8">
+            Born from Passion,<br>Worn with Pride
+        </h2>
+        <p class="text-blush/80 text-lg leading-relaxed font-light mb-10">
+            Claws &amp; Crystals was born from a deep passion for preserving India's jewellery-making traditions — the intricate filigree of Odisha, the temple motifs of the South, the vibrant enamels of Rajasthan. We bring these crafts to contemporary wardrobes without losing an ounce of their soul.
+        </p>
+        <a href="/about/" class="inline-block border border-gold text-gold hover:bg-gold hover:text-brown transition-all duration-300 px-8 py-3 text-sm tracking-wider font-sans">
+            Read Our Story
+        </a>
+    </div>
+</section>
+
+
+<!-- ░░ TESTIMONIALS ░░ -->
+<section class="py-24 px-6 bg-cream">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="section-header">
+            <span class="section-eyebrow">Kind Words</span>
+            <h2 class="section-title">What Our Customers Say</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+            <div class="glass-card p-10">
+                <p class="text-4xl text-gold/40 font-serif leading-none mb-4">"</p>
+                <p class="font-serif text-xl text-brown leading-relaxed italic mb-6">
+                    Beautiful craftsmanship and the most thoughtful packaging I've ever received. Feels like unwrapping a treasure.
+                </p>
+                <p class="text-xs uppercase tracking-widest text-muted">— Priya M., Mumbai</p>
+            </div>
+            <div class="glass-card p-10">
+                <p class="text-4xl text-gold/40 font-serif leading-none mb-4">"</p>
+                <p class="font-serif text-xl text-brown leading-relaxed italic mb-6">
+                    Stunning designs that perfectly complemented my lehenga. Got so many compliments at the wedding.
+                </p>
+                <p class="text-xs uppercase tracking-widest text-muted">— Ananya S., Delhi</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ░░ INSTAGRAM / JOURNEY ░░ -->
+<section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto text-center">
+
+        <span class="section-eyebrow">@clawsandcrystals</span>
+        <h2 class="section-title mt-2 mb-12">Follow Our Journey</h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {% for i in "1234" %}
+            <div class="aspect-square rounded-xl bg-blush/60 border border-gold/10 overflow-hidden relative group cursor-pointer">
+                <div class="absolute inset-0 bg-brown/0 group-hover:bg-brown/20 transition-all duration-300 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07..."/>
+                    </svg>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
 </section>
 
 {% endblock %}

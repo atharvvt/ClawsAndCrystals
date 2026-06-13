@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account — Claws & Crystals{% endblock %}
+
+{% block content %}
+
+<section class="relative min-h-screen flex items-center justify-center px-6 py-24 bg-ivory overflow-hidden">
+
+    <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div class="w-[500px] h-[500px] rounded-full opacity-20"
+             style="background: radial-gradient(circle, #C9A84C 0%, transparent 70%); filter: blur(70px);"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md">
+        <div class="glass-card p-10">
+
+            <span class="section-eyebrow">Welcome</span>
+            <h1 class="font-serif text-4xl font-semibold text-brown leading-tight mt-1 mb-1">
+                Create Account
+            </h1>
+            <p class="text-sm text-muted font-light mb-8">
+                Already have one?
+                <a href="{% url 'login' %}" class="text-gold hover:underline">Sign in →</a>
+            </p>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="space-y-5">
+
+                    {% for field in form %}
+                    <div>
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="form-error">{{ field.errors|join:", " }}</p>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <p class="form-hint">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {% if form.non_field_errors %}
+                    <div class="rounded-lg px-4 py-3" style="background: rgba(185,28,28,0.06); border: 1px solid rgba(185,28,28,0.2);">
+                        {% for error in form.non_field_errors %}
+                        <p class="text-sm" style="color: #b91c1c;">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <button type="submit" class="btn-primary mt-8 w-full text-center">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p class="text-center text-sm text-muted font-light mt-6">
+                Already a member?
+                <a href="{% url 'login' %}" class="text-gold hover:underline">Sign in</a>
+            </p>
+
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

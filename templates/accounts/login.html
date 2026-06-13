@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+
+<section class="py-20 px-6">
+
+    <div class="max-w-md mx-auto glass-card p-8">
+
+        <span class="section-eyebrow">
+            Welcome Back
+        </span>
+
+        <h1 class="section-title mb-8">
+            Sign In
+        </h1>
+
+        {% if error %}
+            <div class="mb-4 text-red-500">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="space-y-5">
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    required
+                    class="w-full border p-3 rounded"
+                >
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    class="w-full border p-3 rounded"
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn-primary mt-6 w-full text-center"
+            >
+                Login
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}About — Claws & Crystals{% endblock %}
+
+{% block content %}
+
+<section class="py-24 px-6 bg-brown text-ivory relative overflow-hidden">
+    <div class="pointer-events-none absolute -left-32 -bottom-32 w-[500px] h-[500px] rounded-full opacity-10"
+         style="background: radial-gradient(circle, #C9A84C, transparent 70%);"></div>
+    <div class="max-w-3xl mx-auto text-center relative z-10">
+        <span class="section-eyebrow !text-gold">Our Story</span>
+        <h1 class="font-serif text-6xl font-semibold text-ivory mt-3 mb-6">The People Behind<br>the Pieces</h1>
+        <p class="text-blush/75 text-lg font-light leading-relaxed">
+            Claws &amp; Crystals began as a small workshop in Pune, driven by one belief: that Indian jewellery deserves a global stage. We work directly with artisans across Rajasthan, Tamil Nadu, and West Bengal to bring their generations-old techniques to you — unfiltered and unapologetic.
+        </p>
+    </div>
+</section>
+
+<section class="py-24 px-6">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+            <span class="section-eyebrow">Our Values</span>
+            <h2 class="section-title mt-2 mb-6">Craft First, Always</h2>
+            <p class="text-muted font-light leading-relaxed mb-4">
+                We believe in paying artisans fairly, sourcing materials responsibly, and designing pieces that outlast trends. Every item in our collection tells the story of the hands that made it.
+            </p>
+            <p class="text-muted font-light leading-relaxed">
+                We're a small team, and we like it that way — it means every order gets personal attention, and every customer relationship matters.
+            </p>
+        </div>
+        <div class="glass-card p-10 text-center">
+            <p class="font-serif text-7xl text-gold font-semibold mb-2">12+</p>
+            <p class="text-muted text-sm uppercase tracking-widest">Artisan Families</p>
+            <div class="w-8 h-px bg-gold/40 mx-auto my-6"></div>
+            <p class="font-serif text-7xl text-gold font-semibold mb-2">500+</p>
+            <p class="text-muted text-sm uppercase tracking-widest">Happy Customers</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
