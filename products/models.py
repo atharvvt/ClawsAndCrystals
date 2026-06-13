@@ -133,6 +133,22 @@ class Product(models.Model):
         ).first()
 
         return primary or self.images.first()
+    
+    @property
+    def average_rating(self):
+
+        reviews = self.reviews.filter(
+            approved=True
+        )
+
+        if not reviews.exists():
+            return 0
+
+        return round(
+            sum(r.rating for r in reviews) /
+            reviews.count(),
+            1
+        )
 
     def __str__(self):
         return self.name
@@ -187,3 +203,5 @@ def category_products(request, slug):
 
         }
     )
+
+

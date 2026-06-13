@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from products.models import Product, Category
+from .forms import SuggestionForm
 
 def home(request):
 
@@ -17,4 +18,40 @@ def home(request):
         request,
         "homepage/home.html",
         context
+    )
+
+def about(request):
+    return render(
+        request,
+        "pages/about.html"
+    )
+
+
+def contact(request):
+
+    submitted = False
+
+    if request.method == "POST":
+
+        form = SuggestionForm(request.POST)
+
+        if form.is_valid():
+
+            form.save()
+
+            submitted = True
+
+            form = SuggestionForm()
+
+    else:
+
+        form = SuggestionForm()
+
+    return render(
+        request,
+        "pages/contact.html",
+        {
+            "form": form,
+            "submitted": submitted,
+        }
     )

@@ -1,50 +1,174 @@
 {% extends "base.html" %}
 
-{% block title %}Contact — Claws & Crystals{% endblock %}
+{% block title %}
+Contact — Claws & Crystals
+{% endblock %}
 
 {% block content %}
 
 <section class="py-24 px-6 bg-cream min-h-screen">
-    <div class="max-w-xl mx-auto">
+
+    <div class="max-w-2xl mx-auto">
 
         <div class="text-center mb-12">
-            <span class="section-eyebrow">Get in Touch</span>
-            <h1 class="font-serif text-5xl font-semibold text-brown mt-2">We'd Love to<br>Hear from You</h1>
+
+            <span class="section-eyebrow">
+                Get in Touch
+            </span>
+
+            <h1 class="font-serif text-5xl font-semibold text-brown mt-2">
+                We'd Love to Hear From You
+            </h1>
+
+            <p class="text-muted mt-4 font-light max-w-lg mx-auto">
+                Have a question, product request, custom jewellery idea,
+                or a suggestion for us? We'd love to hear your thoughts.
+            </p>
+
         </div>
 
-        <div class="glass-card p-10">
-            <div class="space-y-6">
+        {% if submitted %}
 
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-muted mb-2">Your Name</label>
-                    <input type="text" placeholder="Priya Sharma"
-                           class="w-full bg-ivory border border-blush rounded-lg px-4 py-3 text-brown placeholder-muted/40 focus:outline-none focus:border-gold transition-colors font-light">
-                </div>
+        <div class="glass-card p-5 mb-8 text-center">
 
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-muted mb-2">Email Address</label>
-                    <input type="email" placeholder="priya@example.com"
-                           class="w-full bg-ivory border border-blush rounded-lg px-4 py-3 text-brown placeholder-muted/40 focus:outline-none focus:border-gold transition-colors font-light">
-                </div>
+            <p class="text-brown font-medium">
+                ✓ Thank you for your message.
+            </p>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-widest text-muted mb-2">Message</label>
-                    <textarea rows="5" placeholder="Tell us about your enquiry..."
-                              class="w-full bg-ivory border border-blush rounded-lg px-4 py-3 text-brown placeholder-muted/40 focus:outline-none focus:border-gold transition-colors font-light resize-none"></textarea>
-                </div>
+            <p class="text-muted text-sm mt-1">
+                We'll review it and get back to you soon.
+            </p>
 
-                <button class="btn-primary w-full text-center">
-                    Send Message
-                </button>
-
-            </div>
         </div>
 
-        <p class="text-center text-muted text-sm mt-8 font-light">
-            Or email us directly at <a href="mailto:hello@clawsandcrystals.in" class="text-gold hover:underline">hello@clawsandcrystals.in</a>
-        </p>
+        {% endif %}
+
+        <div class="glass-card p-8 md:p-10">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="space-y-6">
+
+                    <!-- Name -->
+
+                    <div>
+
+                        <label class="block text-xs uppercase tracking-widest text-muted mb-2">
+
+                            Your Name
+
+                        </label>
+
+                        <input type="text" name="name" required value="{{ form.name.value|default:'' }}"
+                            placeholder="Priya Sharma"
+                            class="w-full bg-white border border-gold/20 rounded-lg px-4 py-3 text-brown placeholder:text-muted/50 focus:outline-none focus:border-gold transition-colors">
+
+                    </div>
+
+                    <!-- Email -->
+
+                    <div>
+
+                        <label class="block text-xs uppercase tracking-widest text-muted mb-2">
+
+                            Email Address
+
+                        </label>
+
+                        <input type="email" name="email" required value="{{ form.email.value|default:'' }}"
+                            placeholder="priya@example.com"
+                            class="w-full bg-white border border-gold/20 rounded-lg px-4 py-3 text-brown placeholder:text-muted/50 focus:outline-none focus:border-gold transition-colors">
+
+                    </div>
+
+                    <!-- Subject -->
+
+                    <div>
+
+                        <label class="block text-xs uppercase tracking-widest text-muted mb-2">
+
+                            Subject
+
+                        </label>
+
+                        <input type="text" name="subject" required value="{{ form.subject.value|default:'' }}"
+                            placeholder="Product Suggestion"
+                            class="w-full bg-white border border-gold/20 rounded-lg px-4 py-3 text-brown placeholder:text-muted/50 focus:outline-none focus:border-gold transition-colors">
+
+                    </div>
+
+                    <!-- Message -->
+
+                    <div>
+
+                        <label class="block text-xs uppercase tracking-widest text-muted mb-2">
+
+                            Message
+
+                        </label>
+
+                        <textarea name="message" rows="6" required
+                            placeholder="Tell us about your enquiry, feedback, or jewellery suggestion..."
+                            class="w-full bg-white border border-gold/20 rounded-lg px-4 py-3 text-brown placeholder:text-muted/50 focus:outline-none focus:border-gold transition-colors resize-none">{{ form.message.value|default:'' }}</textarea>
+
+                    </div>
+
+                    <!-- Errors -->
+
+                    {% if form.errors %}
+
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <p class="text-red-600 text-sm">
+                            {{ error }}
+                        </p>
+                        {% endfor %}
+                        {% endfor %}
+
+                        {% for error in form.non_field_errors %}
+                        <p class="text-red-600 text-sm">
+                            {{ error }}
+                        </p>
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Submit -->
+
+                    <button type="submit" class="btn-primary w-full text-center">
+
+                        Send Message
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- Contact Info -->
+
+        <div class="text-center mt-10 space-y-2">
+
+            <p class="text-muted text-sm font-light">
+                Or email us directly at
+            </p>
+
+            <a href="mailto:hello@clawsandcrystals.in" class="text-gold hover:underline font-medium">
+                hello@clawsandcrystals.in
+            </a>
+
+        </div>
 
     </div>
+
 </section>
 
 {% endblock %}
