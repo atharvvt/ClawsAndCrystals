@@ -166,15 +166,15 @@
                 {% endif %}
 
                 <!-- Actions -->
-
+                
                 <div class="flex flex-col sm:flex-row gap-4 mt-10">
-
-                    <button class="btn-primary flex-1 text-center">
+                
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn-primary flex-1 text-center">
                         Add To Cart
-                    </button>
-
+                    </a>
+                
                     {% if is_in_wishlist %}
-
+                
                     <a href="{% url 'toggle_wishlist' product.id %}" class="glass-card px-6 py-3 text-center">
                         ♥ Saved
                     </a>

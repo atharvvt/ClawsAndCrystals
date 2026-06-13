@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}
+Shopping Cart
+{% endblock %}
+
+{% block content %}
+
+<section class="py-16 px-6 min-h-screen">
+
+    <div class="max-w-6xl mx-auto">
+
+        <div class="section-header mb-12">
+
+            <span class="section-eyebrow">
+                Shopping Bag
+            </span>
+
+            <h1 class="section-title">
+                Your Cart
+            </h1>
+
+        </div>
+
+        {% if cart_items %}
+
+        <div class="space-y-6">
+
+            {% for item in cart_items %}
+
+            <div class="glass-card p-6 flex justify-between items-center">
+
+                <div>
+
+                    <h3 class="font-serif text-xl text-brown">
+                        {{ item.product.name }}
+                    </h3>
+
+                    <p class="text-gold">
+                        ₹{{ item.total_price }}
+                    </p>
+
+                </div>
+
+                <div class="flex items-center gap-4">
+
+                    <a href="{% url 'decrease_quantity' item.id %}" class="glass-card px-3 py-1">
+                        −
+                    </a>
+
+                    <span>
+                        {{ item.quantity }}
+                    </span>
+
+                    <a href="{% url 'increase_quantity' item.id %}" class="glass-card px-3 py-1">
+                        +
+                    </a>
+
+                    <a href="{% url 'remove_from_cart' item.id %}" class="text-red-500">
+                        Remove
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="mt-10 text-right">
+
+            <h2 class="text-3xl font-serif text-brown">
+
+                Total:
+                ₹{{ total }}
+
+            </h2>
+
+            <a href="#" class="btn-primary mt-6">
+                Proceed To Checkout
+            </a>
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-20">
+
+            <h3 class="text-2xl font-serif text-brown">
+                Your cart is empty
+            </h3>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}
