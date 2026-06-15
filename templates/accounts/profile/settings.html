@@ -1,0 +1,47 @@
+{% extends "accounts/profile/base_profile.html" %}
+
+{% block title %}Preferences — Claws & Crystals{% endblock %}
+
+{% block profile_content %}
+<div class="glass-card p-6 md:p-8">
+    <span class="section-eyebrow">Settings</span>
+    <h1 class="section-title text-left !text-3xl mb-8">Preferences</h1>
+
+    <form method="post" class="max-w-lg">
+        {% csrf_token %}
+
+        <div class="form-field">
+            <label class="form-label" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+            <p class="form-error">{{ form.phone.errors|join:", " }}</p>
+            {% endif %}
+            <p class="form-hint">Used for order updates and delivery coordination.</p>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-gold/20">
+            <h2 class="font-serif text-lg text-brown mb-4">Email Notifications</h2>
+
+            <div class="space-y-4">
+                <label class="flex items-start gap-3 cursor-pointer">
+                    {{ form.receive_order_updates }}
+                    <span>
+                        <span class="block text-sm text-brown font-medium">Order updates</span>
+                        <span class="block text-xs text-muted mt-0.5">Shipping and delivery notifications</span>
+                    </span>
+                </label>
+
+                <label class="flex items-start gap-3 cursor-pointer">
+                    {{ form.receive_promotions }}
+                    <span>
+                        <span class="block text-sm text-brown font-medium">Promotions & new arrivals</span>
+                        <span class="block text-xs text-muted mt-0.5">Exclusive offers and collection launches</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary mt-8">Save Preferences</button>
+    </form>
+</div>
+{% endblock %}

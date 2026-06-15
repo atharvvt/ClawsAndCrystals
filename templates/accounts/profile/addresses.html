@@ -1,0 +1,56 @@
+{% extends "accounts/profile/base_profile.html" %}
+
+{% block title %}My Addresses — Claws & Crystals{% endblock %}
+
+{% block profile_content %}
+<div class="glass-card p-6 md:p-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <span class="section-eyebrow">Shipping</span>
+            <h1 class="section-title text-left !text-3xl">Saved Addresses</h1>
+        </div>
+        <a href="{% url 'profile_address_add' %}" class="btn-primary !text-xs !py-2">Add New Address</a>
+    </div>
+
+    {% if addresses %}
+    <div class="grid sm:grid-cols-2 gap-4">
+        {% for address in addresses %}
+        <div class="glass-card p-5 {% if address.is_default %}glass-card--selected{% endif %}">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <p class="font-medium text-brown">
+                        {{ address.label }}
+                        {% if address.is_default %}
+                        <span class="text-xs text-gold ml-1">Default</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-sm text-muted mt-1">{{ address.full_name }}</p>
+                </div>
+            </div>
+            <p class="text-sm text-brown leading-relaxed">
+                {{ address.address }}<br>
+                {{ address.city }}, {{ address.state }} — {{ address.pincode }}<br>
+                {{ address.phone }}
+            </p>
+            <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gold/10">
+                <a href="{% url 'profile_address_edit' address.id %}"
+                    class="text-xs text-gold hover:underline">Edit</a>
+                {% if not address.is_default %}
+                <a href="{% url 'profile_address_set_default' address.id %}"
+                    class="text-xs text-gold hover:underline">Set as default</a>
+                {% endif %}
+                <a href="{% url 'profile_address_delete' address.id %}"
+                    class="text-xs text-red-600 hover:underline">Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3 class="empty-state__title">No addresses saved</h3>
+        <p class="empty-state__text">Add an address for faster checkout.</p>
+        <a href="{% url 'profile_address_add' %}" class="btn-primary mt-6">Add Address</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

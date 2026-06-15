@@ -4,8 +4,9 @@ from django import forms
 from django.core.validators import RegexValidator
 
 
-FIELD_CLASS = "glass-card p-4 w-full"
-CHECKBOX_CLASS = "mr-2"
+FIELD_CLASS = "cc-input"
+TEXTAREA_CLASS = "cc-textarea"
+CHECKBOX_CLASS = "mr-2 align-middle"
 
 
 class CheckoutForm(forms.Form):
@@ -62,7 +63,7 @@ class CheckoutForm(forms.Form):
         min_length=10,
         widget=forms.Textarea(
             attrs={
-                "class": FIELD_CLASS,
+                "class": TEXTAREA_CLASS,
                 "placeholder": "Full Address",
                 "rows": 4,
                 "required": True,

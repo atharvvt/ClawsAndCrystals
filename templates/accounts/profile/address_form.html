@@ -1,0 +1,38 @@
+{% extends "accounts/profile/base_profile.html" %}
+
+{% block title %}{{ form_title }} — Claws & Crystals{% endblock %}
+
+{% block profile_content %}
+<div class="glass-card p-6 md:p-8">
+    <span class="section-eyebrow">Address</span>
+    <h1 class="section-title text-left !text-3xl mb-8">{{ form_title }}</h1>
+
+    <form method="post" class="max-w-xl">
+        {% csrf_token %}
+
+        <div class="grid md:grid-cols-2 gap-4">
+            {% for field in form %}
+            <div class="form-field {% if field.name == 'address' %}md:col-span-2{% endif %}">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                <label class="flex items-center gap-2 cursor-pointer mt-2">
+                    {{ field }}
+                    <span class="text-sm text-brown">{{ field.label }}</span>
+                </label>
+                {% else %}
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% endif %}
+                {% if field.errors %}
+                <p class="form-error">{{ field.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="flex gap-3 mt-8">
+            <button type="submit" class="btn-primary">Save Address</button>
+            <a href="{% url 'profile_addresses' %}" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

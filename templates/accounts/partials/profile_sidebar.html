@@ -1,0 +1,49 @@
+<aside class="lg:col-span-1">
+    <div class="glass-card p-6 lg:sticky lg:top-28">
+        <div class="mb-6 pb-6 border-b border-gold/20">
+            <p class="section-eyebrow">My Account</p>
+            <h2 class="font-serif text-2xl text-brown">{{ request.user.username }}</h2>
+            <p class="text-sm text-muted mt-1">{{ request.user.email }}</p>
+        </div>
+
+        <nav class="profile-nav space-y-1">
+            <a href="{% url 'profile' %}"
+                class="profile-nav__link {% if active_section == 'dashboard' %}is-active{% endif %}">
+                Overview
+            </a>
+            <a href="{% url 'profile_edit' %}"
+                class="profile-nav__link {% if active_section == 'edit' %}is-active{% endif %}">
+                Edit Profile
+            </a>
+            <a href="{% url 'profile_addresses' %}"
+                class="profile-nav__link {% if active_section == 'addresses' %}is-active{% endif %}">
+                Addresses
+                {% if address_count %}<span class="profile-nav__badge">{{ address_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'profile_password' %}"
+                class="profile-nav__link {% if active_section == 'password' %}is-active{% endif %}">
+                Change Password
+            </a>
+            <a href="{% url 'profile_settings' %}"
+                class="profile-nav__link {% if active_section == 'settings' %}is-active{% endif %}">
+                Preferences
+            </a>
+            <hr class="border-gold/20 my-3">
+            <a href="{% url 'my_orders' %}" class="profile-nav__link">
+                My Orders
+                {% if order_count %}<span class="profile-nav__badge">{{ order_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'wishlist' %}" class="profile-nav__link">
+                Wishlist
+                {% if wishlist_count %}<span class="profile-nav__badge">{{ wishlist_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'cart' %}" class="profile-nav__link">
+                Cart
+                {% if cart_count %}<span class="profile-nav__badge">{{ cart_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'logout' %}" class="profile-nav__link text-red-600 hover:!text-red-700">
+                Logout
+            </a>
+        </nav>
+    </div>
+</aside>

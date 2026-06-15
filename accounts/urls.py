@@ -1,27 +1,41 @@
 from django.urls import path
 
-from .views import (
-    register_view,
-    login_view,
-    logout_view,
+from .profile_views import (
+    profile_address_add,
+    profile_address_delete,
+    profile_address_edit,
+    profile_address_set_default,
+    profile_addresses,
+    profile_dashboard,
+    profile_edit,
+    profile_password,
+    profile_settings,
 )
+from .views import login_view, logout_view, register_view
 
 urlpatterns = [
+    path("register/", register_view, name="register"),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+    path("profile/", profile_dashboard, name="profile"),
+    path("profile/edit/", profile_edit, name="profile_edit"),
+    path("profile/settings/", profile_settings, name="profile_settings"),
+    path("profile/password/", profile_password, name="profile_password"),
+    path("profile/addresses/", profile_addresses, name="profile_addresses"),
+    path("profile/addresses/add/", profile_address_add, name="profile_address_add"),
     path(
-        "register/",
-        register_view,
-        name="register",
+        "profile/addresses/<int:address_id>/edit/",
+        profile_address_edit,
+        name="profile_address_edit",
     ),
-
     path(
-        "login/",
-        login_view,
-        name="login",
+        "profile/addresses/<int:address_id>/delete/",
+        profile_address_delete,
+        name="profile_address_delete",
     ),
-
     path(
-        "logout/",
-        logout_view,
-        name="logout",
+        "profile/addresses/<int:address_id>/default/",
+        profile_address_set_default,
+        name="profile_address_set_default",
     ),
 ]

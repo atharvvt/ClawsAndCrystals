@@ -1,13 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}
-Checkout
-{% endblock %}
+{% block title %}Checkout{% endblock %}
 
 {% block content %}
 
-<section class="py-16 px-6">
-
+<section class="page-section px-6">
     <div class="max-w-5xl mx-auto">
 
         <div class="section-header mb-12">
@@ -22,79 +19,74 @@ Checkout
                 {% if saved_addresses %}
                 <div class="mb-8">
                     <h2 class="font-serif text-xl text-brown mb-4">Saved Addresses</h2>
-                    <div class="space-y-3">
+                    <div class="grid sm:grid-cols-2 gap-3">
                         {% for address in saved_addresses %}
                         <a href="{% url 'checkout' %}?use_address={{ address.id }}"
-                            class="glass-card p-4 block {% if selected_address and selected_address.id == address.id %}border border-gold/50{% endif %}">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="font-medium text-brown">
-                                        {{ address.label }}
-                                        {% if address.is_default %}
-                                        <span class="text-xs text-gold ml-2">Default</span>
-                                        {% endif %}
-                                    </p>
-                                    <p class="text-sm text-muted mt-1">
-                                        {{ address.full_name }} · {{ address.city }}, {{ address.state }}
-                                    </p>
-                                </div>
-                                <span class="text-xs text-gold">Use</span>
-                            </div>
+                            class="address-card glass-card glass-card--interactive {% if selected_address and selected_address.id == address.id %}glass-card--selected{% endif %}">
+                            <p class="address-card__label">
+                                {{ address.label }}
+                                {% if address.is_default %}
+                                <span class="text-xs text-gold ml-1">Default</span>
+                                {% endif %}
+                            </p>
+                            <p class="address-card__meta">
+                                {{ address.full_name }}<br>
+                                {{ address.city }}, {{ address.state }} — {{ address.pincode }}
+                            </p>
                         </a>
                         {% endfor %}
                     </div>
                 </div>
                 {% endif %}
 
-                <form method="post">
+                <form method="post" class="glass-card p-6 md:p-8">
                     {% csrf_token %}
 
-                    <div class="grid md:grid-cols-2 gap-6">
+                    <div class="grid md:grid-cols-2 gap-4">
                         {% for field in form %}
                         {% if field.name != "save_address" and field.name != "address_label" %}
-                        <div class="{% if field.name == 'address' %}md:col-span-2{% endif %}">
-                            <label class="text-xs uppercase tracking-wider text-muted mb-2 block">
-                                {{ field.label }}
-                            </label>
+                        <div class="form-field {% if field.name == 'address' %}md:col-span-2{% endif %}">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field }}
                             {% if field.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ field.errors|join:", " }}</p>
+                            <p class="form-error">{{ field.errors|join:", " }}</p>
                             {% endif %}
                         </div>
                         {% endif %}
                         {% endfor %}
                     </div>
 
-                    <div class="mt-6 glass-card p-4">
-                        <label class="flex items-center text-sm text-brown">
+                    <div class="mt-6 pt-6 border-t border-gold/20">
+                        <label class="flex items-center text-sm text-brown cursor-pointer">
                             {{ form.save_address }}
                             Save this address for future orders
                         </label>
-                        <div class="mt-3">
-                            <label class="text-xs uppercase tracking-wider text-muted mb-2 block">
-                                Address Label
+                        <div class="form-field mt-4">
+                            <label class="form-label" for="{{ form.address_label.id_for_label }}">
+                                {{ form.address_label.label }}
                             </label>
                             {{ form.address_label }}
                             {% if form.address_label.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.address_label.errors|join:", " }}</p>
+                            <p class="form-error">{{ form.address_label.errors|join:", " }}</p>
                             {% endif %}
+                            <p class="form-hint">Used when saving a new address (e.g. Home, Office).</p>
                         </div>
                     </div>
 
-                    <div class="mt-10 flex justify-end">
+                    <div class="mt-8 flex justify-end">
                         <button type="submit" class="btn-primary">Continue to Payment</button>
                     </div>
                 </form>
 
             </div>
 
-            <div class="glass-card p-6 h-fit">
+            <div class="glass-card p-6 h-fit lg:sticky lg:top-28">
                 <h2 class="font-serif text-2xl text-brown mb-6">Order Summary</h2>
                 <div class="space-y-4">
                     {% for item in cart_items %}
-                    <div class="flex justify-between text-sm">
+                    <div class="flex justify-between text-sm gap-4">
                         <span class="text-brown">{{ item.product.name }} × {{ item.quantity }}</span>
-                        <span class="text-gold">₹{{ item.total_price }}</span>
+                        <span class="text-gold shrink-0">₹{{ item.total_price }}</span>
                     </div>
                     {% endfor %}
                 </div>
@@ -107,7 +99,6 @@ Checkout
         </div>
 
     </div>
-
 </section>
 
 {% endblock %}

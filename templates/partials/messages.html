@@ -1,0 +1,17 @@
+{% if messages %}
+<div class="page-container pt-4" id="site-messages">
+    <div class="space-y-2">
+        {% for message in messages %}
+        <div class="alert glass-card flex items-start justify-between gap-4
+            {% if message.tags == 'error' %}alert--error
+            {% elif message.tags == 'success' %}alert--success
+            {% else %}alert--info{% endif %}"
+            role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="text-current opacity-50 hover:opacity-100 text-lg leading-none"
+                data-dismiss-alert aria-label="Dismiss">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

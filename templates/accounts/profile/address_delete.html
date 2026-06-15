@@ -1,0 +1,21 @@
+{% extends "accounts/profile/base_profile.html" %}
+
+{% block title %}Delete Address — Claws & Crystals{% endblock %}
+
+{% block profile_content %}
+<div class="glass-card p-6 md:p-8 max-w-lg">
+    <span class="section-eyebrow">Confirm</span>
+    <h1 class="section-title text-left !text-3xl mb-4">Delete Address?</h1>
+
+    <p class="text-muted mb-6">
+        Are you sure you want to delete <strong class="text-brown">{{ address.label }}</strong>
+        ({{ address.city }}, {{ address.state }})? This cannot be undone.
+    </p>
+
+    <form method="post" class="flex gap-3">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary !bg-red-700 hover:!bg-red-800">Delete</button>
+        <a href="{% url 'profile_addresses' %}" class="btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

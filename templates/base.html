@@ -6,51 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/design-tokens.css' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        /* Tailwind reads the same tokens as CSS — change colors in design-tokens.css */
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        ivory:   '#FAF7F2',
-                        cream:   '#F3ECE3',
-                        blush:   '#E8D5C4',
-                        gold:    '#C9A84C',
-                        'gold-light': '#E8D499',
-                        brown:   '#3D1F0D',
-                        'brown-mid': '#6F4E37',
-                        muted:   '#9A8070',
+                        ivory:       'var(--cc-ivory)',
+                        cream:       'var(--cc-cream)',
+                        blush:       'var(--cc-blush)',
+                        gold:        'var(--cc-accent)',
+                        'gold-light':'var(--cc-accent-light)',
+                        brown:       'var(--cc-brown)',
+                        'brown-mid': 'var(--cc-brown-mid)',
+                        muted:       'var(--cc-muted)',
                     },
                     fontFamily: {
-                        serif:  ['"Cormorant Garamond"', 'Georgia', 'serif'],
-                        sans:   ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['var(--cc-font-serif)'],
+                        sans:  ['var(--cc-font-sans)'],
                     },
-                    backdropBlur: {
-                        xs: '4px',
-                    }
-                }
-            }
-        }
+                    backdropBlur: { xs: '4px' },
+                },
+            },
+        };
     </script>
-    <title>{% block title %}Claws & Crystals{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}Claws & Crystals{% endblock %}</title>
 </head>
-<body class="bg-ivory text-brown font-sans antialiased">
+<body class="bg-ivory text-brown font-sans antialiased min-h-screen flex flex-col">
 
     {% include 'partials/navbar.html' %}
+    {% include 'partials/messages.html' %}
 
-    {% if messages %}
-    <div class="max-w-5xl mx-auto px-6 pt-4">
-        {% for message in messages %}
-        <div class="glass-card p-4 mb-2 text-sm {% if message.tags == 'error' %}text-red-600{% else %}text-brown{% endif %}">
-            {{ message }}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <main>
+    <main class="flex-1">
         {% block content %}{% endblock %}
     </main>
 

@@ -1,33 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}
-Shopping Cart
-{% endblock %}
+{% block title %}Shopping Cart{% endblock %}
 
 {% block content %}
 
-<section class="py-16 px-6 min-h-screen">
-
+<section class="page-section px-6 min-h-[60vh]">
     <div class="max-w-6xl mx-auto">
 
         <div class="section-header mb-12">
-
-            <span class="section-eyebrow">
-                Shopping Bag
-            </span>
-
-            <h1 class="section-title">
-                Your Cart
-            </h1>
-
+            <span class="section-eyebrow">Shopping Bag</span>
+            <h1 class="section-title">Your Cart</h1>
         </div>
 
         {% if cart_items %}
 
         {% if stock_errors %}
-        <div class="glass-card p-4 mb-6 border border-red-200">
-            <p class="text-red-600 text-sm font-medium mb-2">Stock issues in your cart:</p>
-            <ul class="text-sm text-red-600 space-y-1">
+        <div class="alert alert--error glass-card mb-6" role="alert">
+            <p class="font-medium mb-2">Please fix these issues before checkout:</p>
+            <ul class="text-sm space-y-1 list-disc list-inside">
                 {% for error in stock_errors %}
                 <li>{{ error }}</li>
                 {% endfor %}
@@ -35,83 +25,44 @@ Shopping Cart
         </div>
         {% endif %}
 
-        <div class="space-y-6">
-
+        <div class="space-y-4">
             {% for item in cart_items %}
-
-            <div class="glass-card p-6 flex justify-between items-center">
-
+            <div class="glass-card p-5 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-
-                    <h3 class="font-serif text-xl text-brown">
-                        {{ item.product.name }}
-                    </h3>
-
-                    <p class="text-gold">
-                        ₹{{ item.total_price }}
-                    </p>
-
+                    <h3 class="font-serif text-xl text-brown">{{ item.product.name }}</h3>
+                    <p class="text-gold mt-1">₹{{ item.total_price }}</p>
+                    {% if item.quantity > item.product.stock %}
+                    <p class="form-error mt-1">Only {{ item.product.stock }} available</p>
+                    {% endif %}
                 </div>
-
-                <div class="flex items-center gap-4">
-
-                    <a href="{% url 'decrease_quantity' item.id %}" class="glass-card px-3 py-1">
-                        −
-                    </a>
-
-                    <span>
-                        {{ item.quantity }}
-                    </span>
-
-                    <a href="{% url 'increase_quantity' item.id %}" class="glass-card px-3 py-1">
-                        +
-                    </a>
-
-                    <a href="{% url 'remove_from_cart' item.id %}" class="text-red-500">
-                        Remove
-                    </a>
-
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'decrease_quantity' item.id %}" class="btn-secondary !py-2 !px-3" aria-label="Decrease quantity">−</a>
+                    <span class="min-w-[2rem] text-center font-medium">{{ item.quantity }}</span>
+                    <a href="{% url 'increase_quantity' item.id %}" class="btn-secondary !py-2 !px-3" aria-label="Increase quantity">+</a>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="text-sm text-red-600 hover:underline ml-2">Remove</a>
                 </div>
-
             </div>
-
             {% endfor %}
-
         </div>
 
-        <div class="mt-10 text-right">
-
-            <h2 class="text-3xl font-serif text-brown">
-
-                Total:
-                ₹{{ total }}
-
-            </h2>
-
+        <div class="glass-card p-6 mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h2 class="font-serif text-2xl text-brown">Total: <span class="text-gold">₹{{ total }}</span></h2>
             {% if stock_errors %}
-            <p class="text-sm text-muted mt-4">Please fix stock issues before checkout.</p>
+            <span class="btn-primary is-disabled">Proceed To Checkout</span>
             {% else %}
-            <a href="{% url 'checkout' %}" class="btn-primary">
-                Proceed To Checkout
-            </a>
+            <a href="{% url 'checkout' %}" class="btn-primary">Proceed To Checkout</a>
             {% endif %}
-
         </div>
 
         {% else %}
-
-        <div class="text-center py-20">
-
-            <h3 class="text-2xl font-serif text-brown">
-                Your cart is empty
-            </h3>
-
+        <div class="empty-state glass-card">
+            <h3 class="empty-state__title">Your cart is empty</h3>
+            <p class="empty-state__text">Discover handcrafted pieces made for every story.</p>
+            <a href="{% url 'product_list' %}" class="btn-primary mt-8">Browse Collection</a>
         </div>
-
         {% endif %}
 
     </div>
-
 </section>
 
 {% endblock %}

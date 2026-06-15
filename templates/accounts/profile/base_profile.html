@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-section px-6">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid lg:grid-cols-4 gap-8">
+
+            {% include "accounts/partials/profile_sidebar.html" %}
+
+            <div class="lg:col-span-3">
+                {% block profile_content %}{% endblock %}
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

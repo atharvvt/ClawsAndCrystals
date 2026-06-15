@@ -56,7 +56,28 @@ ngrok http 8000
 4. Razorpay also sends `payment.captured` to `/orders/webhook/razorpay/` (idempotent backup).
 5. Unpaid orders can be completed from **My Orders** via **Complete Payment** or **Retry Payment**.
 
-## Tests
+## User profile
+
+Logged-in users can manage their account at `/accounts/profile/`:
+
+- **Overview** — stats, recent orders, saved addresses
+- **Edit Profile** — name and email
+- **Addresses** — add, edit, delete, set default
+- **Change Password** — secure password update (session preserved)
+- **Preferences** — phone number and notification settings
+
+Click your username in the navbar to open your profile.
+
+## Design system
+
+All brand colors and fonts are defined in one file:
+
+[`static/css/design-tokens.css`](static/css/design-tokens.css)
+
+Edit the `:root` variables there to retheme the site. Tailwind utilities (`bg-gold`, `text-brown`, etc.) and component styles (`btn-primary`, `glass-card`, forms) all read from the same tokens.
+
+If you change font families, also update the Google Fonts link in [`templates/base.html`](templates/base.html).
+
 
 ```bash
 python3 manage.py test orders

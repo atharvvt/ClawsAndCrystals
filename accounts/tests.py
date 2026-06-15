@@ -1,9 +1,10 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
+from django.urls import reverse
 
-from accounts.models import ShippingAddress
+from accounts.models import ShippingAddress, UserProfile
 from orders.forms import CheckoutForm
 from orders.models import Order, OrderItem
 from orders.payments import mark_order_paid
@@ -189,3 +190,73 @@ class SavedAddressCheckoutTest(TestCase):
         address = ShippingAddress.objects.get(user=self.user)
         self.assertEqual(address.label, "Home")
         self.assertTrue(address.is_default)
+
+
+class ProfileViewsTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="buyer",
+            email="buyer@example.com",
+            password="testpass123",
+        )
+        self.client = Client()
+        self.client.login(username="buyer", password="testpass123")
+
+    def test_profile_dashboard_requires_login(self):
+        self.client.logout()
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_profile_dashboard_loads(self):
+        response = self.client.get(reverse("profile"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Welcome back")
+
+    def test_profile_edit_updates_user(self):
+        response = self.client.post(
+            reverse("profile_edit"),
+            {
+                "first_name": "Priya",
+                "last_name": "Sharma",
+                "email": "priya@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "Priya")
+        self.assertEqual(self.user.email, "priya@example.com")
+
+    def test_profile_password_change(self):
+        response = self.client.post(
+            reverse("profile_password"),
+            {
+                "old_password": "testpass123",
+                "new_password1": "newpass456!",
+                "new_password2": "newpass456!",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("newpass456!"))
+
+    def test_profile_creates_user_profile(self):
+        self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+    def test_add_address_from_profile(self):
+        response = self.client.post(
+            reverse("profile_address_add"),
+            {
+                "label": "Home",
+                "full_name": "Buyer",
+                "email": "buyer@example.com",
+                "phone": "9876543210",
+                "address": "123 Long Street Name Here",
+                "city": "Mumbai",
+                "state": "Maharashtra",
+                "pincode": "400001",
+                "is_default": True,
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(ShippingAddress.objects.filter(user=self.user).count(), 1)

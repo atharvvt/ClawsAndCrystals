@@ -1,0 +1,92 @@
+{% extends "accounts/profile/base_profile.html" %}
+
+{% block title %}My Profile — Claws & Crystals{% endblock %}
+
+{% block profile_content %}
+<div class="space-y-6">
+
+    <div class="glass-card p-6 md:p-8">
+        <span class="section-eyebrow">Welcome back</span>
+        <h1 class="section-title text-left !text-3xl">
+            {% if request.user.first_name %}{{ request.user.first_name }}{% else %}{{ request.user.username }}{% endif %}
+        </h1>
+        <p class="text-muted mt-2">Member since {{ request.user.date_joined|date:"F Y" }}</p>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+            <div class="glass-card p-4 text-center">
+                <p class="text-2xl font-serif text-gold">{{ order_count }}</p>
+                <p class="text-xs uppercase tracking-wider text-muted mt-1">Orders</p>
+            </div>
+            <div class="glass-card p-4 text-center">
+                <p class="text-2xl font-serif text-gold">{{ address_count }}</p>
+                <p class="text-xs uppercase tracking-wider text-muted mt-1">Addresses</p>
+            </div>
+            <div class="glass-card p-4 text-center">
+                <p class="text-2xl font-serif text-gold">{{ wishlist_count }}</p>
+                <p class="text-xs uppercase tracking-wider text-muted mt-1">Wishlist</p>
+            </div>
+            <div class="glass-card p-4 text-center">
+                <p class="text-2xl font-serif text-gold">{{ cart_count }}</p>
+                <p class="text-xs uppercase tracking-wider text-muted mt-1">Cart Items</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="glass-card p-6">
+            <h2 class="font-serif text-xl text-brown mb-4">Recent Orders</h2>
+            {% if recent_orders %}
+            <div class="space-y-3">
+                {% for order in recent_orders %}
+                <a href="{% url 'order_detail' order.id %}"
+                    class="block p-3 rounded-lg border border-gold/10 hover:border-gold/30 transition-colors">
+                    <div class="flex justify-between items-center">
+                        <span class="text-brown font-medium">Order #{{ order.id }}</span>
+                        <span class="text-gold text-sm">₹{{ order.total_amount }}</span>
+                    </div>
+                    <p class="text-xs text-muted mt-1">
+                        {{ order.created_at|date:"d M Y" }} · {{ order.get_payment_status_display }}
+                    </p>
+                </a>
+                {% endfor %}
+            </div>
+            <a href="{% url 'my_orders' %}" class="inline-block text-sm text-gold mt-4 hover:underline">View all orders →</a>
+            {% else %}
+            <p class="text-muted text-sm">No orders yet.</p>
+            <a href="{% url 'product_list' %}" class="btn-primary mt-4 !text-xs !py-2">Start Shopping</a>
+            {% endif %}
+        </div>
+
+        <div class="glass-card p-6">
+            <h2 class="font-serif text-xl text-brown mb-4">Saved Addresses</h2>
+            {% if addresses %}
+            <div class="space-y-3">
+                {% for address in addresses %}
+                <div class="p-3 rounded-lg border border-gold/10">
+                    <p class="font-medium text-brown">
+                        {{ address.label }}
+                        {% if address.is_default %}<span class="text-xs text-gold ml-1">Default</span>{% endif %}
+                    </p>
+                    <p class="text-sm text-muted mt-1">{{ address.city }}, {{ address.state }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'profile_addresses' %}" class="inline-block text-sm text-gold mt-4 hover:underline">Manage addresses →</a>
+            {% else %}
+            <p class="text-muted text-sm">No saved addresses yet.</p>
+            <a href="{% url 'profile_address_add' %}" class="btn-primary mt-4 !text-xs !py-2">Add Address</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="glass-card p-6">
+        <h2 class="font-serif text-xl text-brown mb-4">Quick Actions</h2>
+        <div class="flex flex-wrap gap-3">
+            <a href="{% url 'profile_edit' %}" class="btn-secondary !text-xs !py-2">Edit Profile</a>
+            <a href="{% url 'profile_password' %}" class="btn-secondary !text-xs !py-2">Change Password</a>
+            <a href="{% url 'profile_settings' %}" class="btn-secondary !text-xs !py-2">Preferences</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

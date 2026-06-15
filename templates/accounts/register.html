@@ -42,9 +42,9 @@
                     {% endfor %}
 
                     {% if form.non_field_errors %}
-                    <div class="rounded-lg px-4 py-3" style="background: rgba(185,28,28,0.06); border: 1px solid rgba(185,28,28,0.2);">
+                    <div class="alert alert--error">
                         {% for error in form.non_field_errors %}
-                        <p class="text-sm" style="color: #b91c1c;">{{ error }}</p>
+                        <p>{{ error }}</p>
                         {% endfor %}
                     </div>
                     {% endif %}
