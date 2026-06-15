@@ -22,86 +22,91 @@ Checkout
 
         </div>
 
-        <form method="post">
+        <div class="grid lg:grid-cols-3 gap-10">
 
-            {% csrf_token %}
+            <div class="lg:col-span-2">
 
-            <div class="grid md:grid-cols-2 gap-6">
+                <form method="post">
 
-                <input
-                    type="text"
-                    name="full_name"
-                    placeholder="Full Name"
-                    required
-                    class="glass-card p-4"
-                >
+                    {% csrf_token %}
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    required
-                    class="glass-card p-4"
-                >
+                    <div class="grid md:grid-cols-2 gap-6">
 
-                <input
-                    type="text"
-                    name="phone"
-                    placeholder="Phone Number"
-                    required
-                    class="glass-card p-4"
-                >
+                        {{ form.full_name }}
+                        {{ form.email }}
+                        {{ form.phone }}
+                        {{ form.city }}
+                        {{ form.state }}
+                        {{ form.pincode }}
 
-                <input
-                    type="text"
-                    name="city"
-                    placeholder="City"
-                    required
-                    class="glass-card p-4"
-                >
+                    </div>
 
-                <input
-                    type="text"
-                    name="state"
-                    placeholder="State"
-                    required
-                    class="glass-card p-4"
-                >
+                    <div class="mt-6">
+                        {{ form.address }}
+                    </div>
 
-                <input
-                    type="text"
-                    name="pincode"
-                    placeholder="Pincode"
-                    required
-                    class="glass-card p-4"
-                >
+                    {% if form.errors %}
+                    <div class="mt-4 text-red-500 text-sm">
+                        Please correct the errors above.
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-10 flex justify-end">
+
+                        <button
+                            type="submit"
+                            class="btn-primary"
+                        >
+                            Continue to Payment
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
-            <textarea
-                name="address"
-                rows="4"
-                placeholder="Full Address"
-                required
-                class="glass-card p-4 w-full mt-6"
-            ></textarea>
+            <div class="glass-card p-6 h-fit">
 
-            <div class="mt-10 flex justify-between items-center">
-
-                <h2 class="text-2xl font-serif text-brown">
-                    Total: ₹{{ total }}
+                <h2 class="font-serif text-2xl text-brown mb-6">
+                    Order Summary
                 </h2>
 
-                <button
-                    type="submit"
-                    class="btn-primary"
-                >
-                    Place Order
-                </button>
+                <div class="space-y-4">
+
+                    {% for item in cart_items %}
+
+                    <div class="flex justify-between text-sm">
+
+                        <span class="text-brown">
+                            {{ item.product.name }} × {{ item.quantity }}
+                        </span>
+
+                        <span class="text-gold">
+                            ₹{{ item.total_price }}
+                        </span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-gold/20 flex justify-between">
+
+                    <span class="font-serif text-xl text-brown">
+                        Total
+                    </span>
+
+                    <span class="font-serif text-xl text-gold">
+                        ₹{{ total }}
+                    </span>
+
+                </div>
 
             </div>
 
-        </form>
+        </div>
 
     </div>
 

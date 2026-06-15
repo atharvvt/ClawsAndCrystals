@@ -40,6 +40,16 @@
 
     {% include 'partials/navbar.html' %}
 
+    {% if messages %}
+    <div class="max-w-5xl mx-auto px-6 pt-4">
+        {% for message in messages %}
+        <div class="glass-card p-4 mb-2 text-sm {% if message.tags == 'error' %}text-red-600{% else %}text-brown{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <main>
         {% block content %}{% endblock %}
     </main>

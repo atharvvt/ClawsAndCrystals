@@ -18,12 +18,17 @@ class OrderAdmin(admin.ModelAdmin):
         "id",
         "user",
         "status",
+        "payment_status",
         "total_amount",
+        "razorpay_order_id",
+        "razorpay_payment_id",
+        "paid_at",
         "created_at",
     )
 
     list_filter = (
         "status",
+        "payment_status",
     )
 
     inlines = [

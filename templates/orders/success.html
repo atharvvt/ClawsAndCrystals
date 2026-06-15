@@ -20,23 +20,48 @@ Order Confirmed
 
         <p class="mt-6 text-muted">
 
-            Your order has been placed successfully.
+            Your payment was successful and your order has been placed.
 
         </p>
 
-        <p class="mt-4 text-brown">
+        <div class="glass-card p-6 mt-8 text-left max-w-md mx-auto space-y-2">
 
-            Order ID:
-            #{{ order.id }}
+            <p class="text-brown">
+                <strong>Order ID:</strong>
+                #{{ order.id }}
+            </p>
 
-        </p>
+            {% if order.razorpay_payment_id %}
+            <p class="text-brown">
+                <strong>Payment ID:</strong>
+                {{ order.razorpay_payment_id }}
+            </p>
+            {% endif %}
 
-        <a
-            href="{% url 'product_list' %}"
-            class="btn-primary mt-8 inline-block"
-        >
-            Continue Shopping
-        </a>
+            <p class="text-brown">
+                <strong>Total Paid:</strong>
+                ₹{{ order.total_amount }}
+            </p>
+
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+
+            <a
+                href="{% url 'order_detail' order.id %}"
+                class="btn-primary"
+            >
+                View Order
+            </a>
+
+            <a
+                href="{% url 'product_list' %}"
+                class="glass-card px-8 py-3 inline-block"
+            >
+                Continue Shopping
+            </a>
+
+        </div>
 
     </div>
 

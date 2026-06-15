@@ -1,4 +1,7 @@
-{% extends "base.html" %} {% block title %} Order #{{ order.id }} {% endblock %}
+{% extends "base.html" %}
+{% block title %}
+Order #{{ order.id }}
+{% endblock %}
 {% block content %}
 
 <section class="py-16 px-6 min-h-screen">
@@ -8,6 +11,26 @@
 
       <h1 class="section-title">Order #{{ order.id }}</h1>
     </div>
+
+    {% if order.payment_status == "unpaid" %}
+    <div class="glass-card p-6 mb-8 border border-gold/30">
+      <p class="text-brown mb-4">
+        Payment is pending for this order.
+      </p>
+      <a href="{% url 'payment' order.id %}" class="btn-primary">
+        Complete Payment
+      </a>
+    </div>
+    {% elif order.payment_status == "failed" %}
+    <div class="glass-card p-6 mb-8 border border-red-200">
+      <p class="text-brown mb-4">
+        Payment failed. Please retry to complete your order.
+      </p>
+      <a href="{% url 'retry_payment' order.id %}" class="btn-primary">
+        Retry Payment
+      </a>
+    </div>
+    {% endif %}
 
     <!-- Order Summary -->
 
@@ -20,6 +43,11 @@
           </p>
 
           <p>
+            <strong>Payment:</strong>
+            {{ order.get_payment_status_display }}
+          </p>
+
+          <p>
             <strong>Total:</strong>
             ₹{{ order.total_amount }}
           </p>
@@ -28,6 +56,13 @@
             <strong>Date:</strong>
             {{ order.created_at|date:"d M Y" }}
           </p>
+
+          {% if order.razorpay_payment_id %}
+          <p>
+            <strong>Payment ID:</strong>
+            {{ order.razorpay_payment_id }}
+          </p>
+          {% endif %}
         </div>
 
         <div>

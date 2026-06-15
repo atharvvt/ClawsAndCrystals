@@ -14,6 +14,12 @@ class Order(models.Model):
         ("cancelled", "Cancelled"),
     )
 
+    PAYMENT_STATUS_CHOICES = (
+        ("unpaid", "Unpaid"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+    )
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -39,6 +45,34 @@ class Order(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default="pending"
+    )
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="unpaid"
+    )
+
+    razorpay_order_id = models.CharField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True
+    )
+
+    razorpay_payment_id = models.CharField(
+        max_length=255,
+        blank=True
+    )
+
+    razorpay_signature = models.CharField(
+        max_length=255,
+        blank=True
+    )
+
+    paid_at = models.DateTimeField(
+        blank=True,
+        null=True
     )
 
     created_at = models.DateTimeField(
