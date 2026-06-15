@@ -86,7 +86,17 @@ SITE_URL=https://yourdomain.com
 SITE_NAME=Claws & Crystals
 ```
 
-For Gmail, use an [App Password](https://myaccount.google.com/apppasswords) (not your regular password).
+For Gmail, use an [App Password](https://myaccount.google.com/apppasswords) (not your regular Gmail password). You need 2-Step Verification enabled on the Google account first. The app password is a 16-character code like `abcd efgh ijkl mnop` — paste it without spaces in `EMAIL_HOST_PASSWORD`.
+
+**macOS SSL note:** If you see `CERTIFICATE_VERIFY_FAILED`, the project uses a certifi-backed SMTP backend automatically when `EMAIL_HOST` is set. Restart the dev server after pulling that change.
+
+### Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `CERTIFICATE_VERIFY_FAILED` | Restart server after update; or run `/Applications/Python 3.14/Install Certificates.command` |
+| `Username and Password not accepted` | Use a Gmail **App Password**, not your login password |
+| Emails print to terminal | Remove or comment out `EMAIL_HOST` in `.env` for console mode |
 
 ### What sends email
 

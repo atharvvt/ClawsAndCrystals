@@ -7,6 +7,20 @@ from django.template.loader import render_to_string
 logger = logging.getLogger(__name__)
 
 
+def get_from_email():
+    """Gmail SMTP requires the From address to match the authenticated account."""
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    if (
+        settings.EMAIL_HOST == "smtp.gmail.com"
+        and settings.EMAIL_HOST_USER
+        and settings.EMAIL_HOST_USER not in from_email
+    ):
+        return f"{settings.SITE_NAME} <{settings.EMAIL_HOST_USER}>"
+
+    return from_email
+
+
 def send_templated_email(subject, template_name, context, recipient_list, reply_to=None):
     if not recipient_list:
         return False
@@ -28,7 +42,7 @@ def send_templated_email(subject, template_name, context, recipient_list, reply_
     message = EmailMultiAlternatives(
         subject=subject,
         body=text_body,
-        from_email=settings.DEFAULT_FROM_EMAIL,
+        from_email=get_from_email(),
         to=recipient_list,
         reply_to=[reply_to] if reply_to else None,
     )

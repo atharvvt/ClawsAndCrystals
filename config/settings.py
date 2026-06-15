@@ -159,7 +159,7 @@ DEFAULT_FROM_EMAIL = os.environ.get(
 ADMIN_ORDER_EMAIL = os.environ.get("ADMIN_ORDER_EMAIL", "")
 
 if EMAIL_HOST:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_BACKEND = "config.email_backend.CertifiEmailBackend"
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
