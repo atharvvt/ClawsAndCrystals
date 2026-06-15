@@ -430,6 +430,115 @@
     border-radius: var(--cc-radius-pill);
 }
 
+/* Review modal */
+body.review-modal-open {
+    overflow: hidden;
+}
+
+.review-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.review-modal.is-open {
+    display: flex;
+}
+
+.review-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(61, 31, 13, 0.45);
+    backdrop-filter: blur(4px);
+}
+
+.review-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 32rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    background: var(--cc-white);
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius-md);
+    box-shadow: var(--cc-shadow-lg);
+    padding: 2rem;
+}
+
+.review-modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    color: var(--cc-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--cc-transition);
+}
+
+.review-modal__close:hover {
+    color: var(--cc-brown);
+}
+
+.review-stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 0.35rem;
+}
+
+.review-stars__label {
+    cursor: pointer;
+}
+
+.review-stars__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.review-stars__star {
+    font-size: 1.75rem;
+    color: rgba(201, 168, 76, 0.25);
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.review-stars__star.is-active,
+.review-stars__label:hover .review-stars__star,
+.review-stars__label:hover ~ .review-stars__label .review-stars__star {
+    color: var(--cc-accent);
+}
+
+.review-stars__label:hover .review-stars__star {
+    transform: scale(1.08);
+}
+
+.review-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--cc-accent);
+    text-decoration: none;
+    transition: opacity var(--cc-transition);
+}
+
+.review-cta:hover {
+    opacity: 0.8;
+}
+
 /* Utility */
 .sr-only {
     position: absolute;

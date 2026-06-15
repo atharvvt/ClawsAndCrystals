@@ -17,4 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    // Reload auth forms restored from browser back/forward cache (stale CSRF token).
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted && document.querySelector("form[method='post'] input[name='csrfmiddlewaretoken']")) {
+            window.location.reload();
+        }
+    });
 });

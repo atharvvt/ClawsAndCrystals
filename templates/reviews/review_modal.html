@@ -1,0 +1,43 @@
+{% load static %}
+<div id="review-modal" class="review-modal{% if open %} is-open{% endif %}" aria-hidden="{% if open %}false{% else %}true{% endif %}">
+    <div class="review-modal__backdrop" data-review-close></div>
+    <div class="review-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+        <button type="button" class="review-modal__close" data-review-close aria-label="Close review form">&times;</button>
+
+        <span class="section-eyebrow">Share your experience</span>
+        <h2 id="review-modal-title" class="font-serif text-2xl text-brown mt-2 mb-1">
+            Review {{ product.name }}
+        </h2>
+        <p class="text-sm text-muted mb-6">
+            Only verified buyers of delivered orders can leave a review.
+        </p>
+
+        <form method="post" action="{% url 'submit_review' product.slug %}" class="review-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next_url }}">
+
+            <div class="form-field">
+                <label class="form-label">Your rating</label>
+                <div class="review-stars" data-star-input>
+                    {% for value in "54321" %}
+                    <label class="review-stars__label">
+                        <input type="radio" name="rating" value="{{ value }}" class="review-stars__input" required>
+                        <span class="review-stars__star" aria-hidden="true">★</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label for="review-comment" class="form-label">Your review</label>
+                <textarea id="review-comment" name="comment" rows="4" class="cc-textarea"
+                    placeholder="Share your experience with this piece…" required></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                <button type="submit" class="btn-primary flex-1">Submit Review</button>
+                <button type="button" class="btn-secondary flex-1" data-review-close>Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

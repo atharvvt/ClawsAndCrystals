@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    cancel_order_view,
     checkout_view,
     my_orders_view,
     order_detail_view,
@@ -51,5 +52,10 @@ urlpatterns = [
         "my-orders/<int:order_id>/",
         order_detail_view,
         name="order_detail",
+    ),
+    path(
+        "my-orders/<int:order_id>/cancel/",
+        cancel_order_view,
+        name="cancel_order",
     ),
 ]

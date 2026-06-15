@@ -4,8 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Case, DecimalField, F, Q, When
 from django.shortcuts import get_object_or_404, render
 
-from orders.models import OrderItem
-from reviews.forms import ReviewForm
+from reviews.eligibility import get_review_eligibility
 from reviews.models import Review
 from wishlist.models import Wishlist
 
@@ -172,42 +171,20 @@ def product_detail(request, slug):
         approved=True,
     )
 
-    can_review = False
-    review_form = None
+    review_eligibility = "login"
+    open_review_modal = request.GET.get("review") == "1"
 
     if request.user.is_authenticated:
-        purchased = OrderItem.objects.filter(
-            order__user=request.user,
-            product=product,
-        ).exists()
-
-        already_reviewed = Review.objects.filter(
-            user=request.user,
-            product=product,
-        ).exists()
-
-        can_review = purchased and not already_reviewed
-
-        if can_review:
-            if request.method == "POST":
-                review_form = ReviewForm(request.POST)
-
-                if review_form.is_valid():
-                    review = review_form.save(commit=False)
-                    review.product = product
-                    review.user = request.user
-                    review.save()
-                    review_form = ReviewForm()
-            else:
-                review_form = ReviewForm()
+        review_eligibility = get_review_eligibility(request.user, product)
 
     context = {
         "product": product,
         "related_products": related_products,
         "is_in_wishlist": is_in_wishlist,
         "reviews": reviews,
-        "can_review": can_review,
-        "review_form": review_form,
+        "can_review": review_eligibility == "can_review",
+        "review_eligibility": review_eligibility,
+        "open_review_modal": open_review_modal and review_eligibility == "can_review",
     }
 
     return render(

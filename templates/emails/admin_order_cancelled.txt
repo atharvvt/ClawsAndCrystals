@@ -1,0 +1,12 @@
+Order #{{ order.id }} was cancelled by the customer.
+
+Customer: {{ order.full_name }} ({{ order.email }})
+Total: ₹{{ order.total_amount }}
+Payment: {{ order.get_payment_status_display }}
+
+{% if order.payment_status == "paid" %}
+Action required: process refund via Razorpay dashboard.
+Payment ID: {{ order.razorpay_payment_id }}
+{% endif %}
+
+Admin: {{ site_url }}/admin/orders/order/{{ order.id }}/change/

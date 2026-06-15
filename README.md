@@ -104,6 +104,7 @@ For Gmail, use an [App Password](https://myaccount.google.com/apppasswords) (not
 |---------|-----------|
 | Payment confirmed | Customer + admin |
 | Order shipped / delivered / cancelled | Customer (if opted in) |
+| Customer cancels order | Customer + admin |
 | Contact form submitted | Admin |
 | Password reset requested | User |
 | Stock drops to 5 or below | Admin |

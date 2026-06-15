@@ -1,0 +1,15 @@
+Hi {{ order.full_name }},
+
+Your order #{{ order.id }} at {{ site_name }} has been cancelled.
+
+{% if order.payment_status == "paid" %}
+A refund will be processed to your original payment method within 5–7 business days.
+{% else %}
+No payment was taken for this order.
+{% endif %}
+
+Order total: ₹{{ order.total_amount }}
+
+View your order: {{ order_url }}
+
+— {{ site_name }}

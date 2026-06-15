@@ -15,7 +15,7 @@
         <div class="alert alert--error mb-6" role="alert">{{ error }}</div>
         {% endif %}
 
-        <form method="post" class="space-y-4">
+        <form method="post" class="space-y-4" action="{% url 'login' %}">
             {% csrf_token %}
 
             <div class="form-field">

@@ -23,6 +23,32 @@ def send_order_confirmation(order):
     )
 
 
+def send_order_cancellation(order):
+    if not user_wants_order_updates(order.user):
+        return False
+
+    return send_templated_email(
+        subject=f"Order #{order.id} cancelled — {settings.SITE_NAME}",
+        template_name="order_cancellation",
+        context=_order_context(order),
+        recipient_list=[order.email],
+    )
+
+
+def send_admin_order_cancelled(order):
+    recipients = admin_recipients()
+
+    if not recipients:
+        return False
+
+    return send_templated_email(
+        subject=f"Order #{order.id} cancelled by customer",
+        template_name="admin_order_cancelled",
+        context=_order_context(order),
+        recipient_list=recipients,
+    )
+
+
 def send_admin_new_order(order):
     recipients = admin_recipients()
 
@@ -47,7 +73,7 @@ def send_order_status_update(order, old_status):
     if order.status == old_status:
         return False
 
-    notify_statuses = {"shipped", "delivered", "cancelled"}
+    notify_statuses = {"shipped", "delivered"}
 
     if order.status not in notify_statuses:
         return False

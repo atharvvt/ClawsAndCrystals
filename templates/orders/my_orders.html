@@ -11,107 +11,67 @@ My Orders
     <div class="max-w-6xl mx-auto">
 
         <div class="section-header mb-12">
+            <span class="section-eyebrow">Purchase History</span>
+            <h1 class="section-title">My Orders</h1>
+        </div>
 
-            <span class="section-eyebrow">
-                Purchase History
-            </span>
+        {% if orders_data %}
 
-            <h1 class="section-title">
-                My Orders
-            </h1>
+        <div class="space-y-6">
+
+            {% for entry in orders_data %}
+            {% with order=entry.order reviewable_items=entry.reviewable_items %}
+
+            <div class="glass-card p-6">
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <a href="{% url 'order_detail' order.id %}"
+                            class="font-serif text-xl text-brown hover:text-gold">
+                            Order #{{ order.id }}
+                        </a>
+                        <p class="text-sm text-muted">{{ order.created_at|date:"d M Y" }}</p>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <p class="text-gold font-medium">₹{{ order.total_amount }}</p>
+                        <p class="text-sm text-brown">{{ order.get_status_display }}</p>
+                        <p class="text-sm {% if order.payment_status == 'paid' %}text-green-600{% elif order.payment_status == 'failed' %}text-red-500{% else %}text-muted{% endif %}">
+                            {{ order.get_payment_status_display }}
+                        </p>
+                    </div>
+                </div>
+
+                {% if reviewable_items %}
+                <div class="mt-4 pt-4 border-t border-gold/20 flex flex-wrap gap-3">
+                    {% for item in reviewable_items %}
+                    {% include "reviews/review_link.html" with item=item %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if order.status != "cancelled" and order.payment_status == "unpaid" %}
+                <div class="mt-4 pt-4 border-t border-gold/20">
+                    <a href="{% url 'payment' order.id %}" class="btn-primary text-sm">Complete Payment</a>
+                </div>
+                {% elif order.status != "cancelled" and order.payment_status == "failed" %}
+                <div class="mt-4 pt-4 border-t border-gold/20">
+                    <a href="{% url 'retry_payment' order.id %}" class="btn-primary text-sm">Retry Payment</a>
+                </div>
+                {% endif %}
+
+            </div>
+
+            {% endwith %}
+            {% endfor %}
 
         </div>
 
-        {% if orders %}
-
-            <div class="space-y-6">
-
-                {% for order in orders %}
-
-                <div class="glass-card p-6">
-
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-
-                        <div>
-
-                            <a
-                                href="{% url 'order_detail' order.id %}"
-                                class="font-serif text-xl text-brown hover:text-gold"
-                            >
-                                Order #{{ order.id }}
-                            </a>
-
-                            <p class="text-sm text-muted">
-                                {{ order.created_at|date:"d M Y" }}
-                            </p>
-
-                        </div>
-
-                        <div class="text-left sm:text-right">
-
-                            <p class="text-gold font-medium">
-                                ₹{{ order.total_amount }}
-                            </p>
-
-                            <p class="text-sm text-brown">
-                                {{ order.get_status_display }}
-                            </p>
-
-                            <p class="text-sm {% if order.payment_status == 'paid' %}text-green-600{% elif order.payment_status == 'failed' %}text-red-500{% else %}text-muted{% endif %}">
-                                {{ order.get_payment_status_display }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    {% if order.payment_status == "unpaid" %}
-
-                    <div class="mt-4 pt-4 border-t border-gold/20">
-
-                        <a
-                            href="{% url 'payment' order.id %}"
-                            class="btn-primary text-sm"
-                        >
-                            Complete Payment
-                        </a>
-
-                    </div>
-
-                    {% elif order.payment_status == "failed" %}
-
-                    <div class="mt-4 pt-4 border-t border-gold/20">
-
-                        <a
-                            href="{% url 'retry_payment' order.id %}"
-                            class="btn-primary text-sm"
-                        >
-                            Retry Payment
-                        </a>
-
-                    </div>
-
-                    {% endif %}
-
-                </div>
-
-                {% endfor %}
-
-            </div>
-
         {% else %}
 
-            <div class="text-center py-20">
-
-                <h3 class="font-serif text-2xl text-brown">
-                    No orders yet
-                </h3>
-
-                <p class="text-muted mt-2">
-                    Your future purchases will appear here.
-                </p>
-
-            </div>
+        <div class="text-center py-20">
+            <h3 class="font-serif text-2xl text-brown">No orders yet</h3>
+            <p class="text-muted mt-2">Your future purchases will appear here.</p>
+        </div>
 
         {% endif %}
 

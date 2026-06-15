@@ -30,7 +30,22 @@ SECRET_KEY = "django-insecure-po_sgb^lgh0%frl^$yuas@256&6gp0m-4%4n&o!c68r8bsvje(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://127.0.0.1:8000,http://localhost:8000",
+    ).split(",")
+    if origin.strip()
+]
+
+CSRF_FAILURE_VIEW = "config.csrf.csrf_failure"
 
 
 # Application definition

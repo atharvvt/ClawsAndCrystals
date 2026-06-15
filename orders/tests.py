@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from accounts.models import UserProfile
 from cart.models import CartItem
+from orders.cancellation import can_cancel_order, cancel_order
 from orders.models import Order, OrderItem
 from orders.payments import (
     RazorpayConfigError,
@@ -213,6 +214,93 @@ class OrderEmailTest(TestCase):
         self.order.save()
 
         self.assertEqual(len(mail.outbox), 0)
+
+
+@override_settings(
+    ADMIN_ORDER_EMAIL="admin@example.com",
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+)
+class OrderCancellationTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="buyer",
+            email="buyer@example.com",
+            password="testpass123",
+        )
+        self.category = Category.objects.create(name="Rings", slug="rings")
+        self.product = Product.objects.create(
+            category=self.category,
+            name="Gold Ring",
+            slug="gold-ring",
+            description="Test ring",
+            price=Decimal("1500.00"),
+            stock=10,
+            status="published",
+        )
+        self.order = Order.objects.create(
+            user=self.user,
+            full_name="Buyer",
+            email="buyer@example.com",
+            phone="9999999999",
+            address="123 Test Street",
+            city="Mumbai",
+            state="Maharashtra",
+            pincode="400001",
+            total_amount=Decimal("1500.00"),
+        )
+        OrderItem.objects.create(
+            order=self.order,
+            product=self.product,
+            quantity=2,
+            price=Decimal("1500.00"),
+        )
+
+    def test_can_cancel_unpaid_pending_order(self):
+        self.assertTrue(can_cancel_order(self.order))
+
+    def test_cannot_cancel_shipped_order(self):
+        self.order.status = "shipped"
+        self.order.save()
+        self.assertFalse(can_cancel_order(self.order))
+
+    def test_cancel_unpaid_order_sends_emails(self):
+        mail.outbox.clear()
+
+        success, _ = cancel_order(self.order)
+
+        self.assertTrue(success)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, "cancelled")
+        self.assertEqual(len(mail.outbox), 2)
+        subjects = [msg.subject for msg in mail.outbox]
+        self.assertTrue(any("cancelled" in s.lower() for s in subjects))
+
+    def test_cancel_paid_order_restores_stock(self):
+        self.order.payment_status = "paid"
+        self.order.status = "processing"
+        self.order.razorpay_payment_id = "pay_test"
+        self.order.save()
+        self.product.stock = 8
+        self.product.save()
+        mail.outbox.clear()
+
+        success, _ = cancel_order(self.order)
+
+        self.assertTrue(success)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock, 10)
+        self.assertEqual(len(mail.outbox), 2)
+
+    def test_cannot_cancel_delivered_order(self):
+        self.order.payment_status = "paid"
+        self.order.status = "delivered"
+        self.order.save()
+
+        success, message = cancel_order(self.order)
+
+        self.assertFalse(success)
+        self.assertIn("no longer", message.lower())
 
 
 class CancelUnpaidOrdersTest(TestCase):

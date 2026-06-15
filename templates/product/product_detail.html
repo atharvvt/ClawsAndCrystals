@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 {% if product.seo_title %}{{ product.seo_title }}{% else %}{{ product.name }} — Claws & Crystals{% endif %}
@@ -220,115 +221,73 @@
 
             </div>
 
-            <section class="max-w-6xl mx-auto px-6 py-16">
+        </div>
 
-                <div class="mb-10">
+        <!-- Customer Reviews (full width, outside product grid) -->
 
-                    <span class="section-eyebrow">
-                        Customer Reviews
-                    </span>
+        <div class="mt-20 border-t border-gold/10 pt-16">
 
-                    <h2 class="section-title">
-                        What Customers Are Saying
-                    </h2>
-
-                    {% if reviews and product.average_rating %}
-                    <p class="text-muted mt-2">
-                        Average rating: <span class="text-gold font-medium">{{ product.average_rating }}/5</span>
-                    </p>
-                    {% endif %}
-
-                </div>
-
-                {% if reviews %}
-
-                <div class="space-y-6">
-
-                    {% for review in reviews %}
-
-                    <div class="glass-card p-6">
-
-                        <div class="flex items-center justify-between mb-3">
-
-                            <h4 class="font-medium text-brown">
-                                {{ review.user.username }}
-                            </h4>
-
-                            <span class="text-gold">
-
-                                {% for i in "12345" %}
-
-                                {% if forloop.counter <= review.rating %} ★ {% else %} ☆ {% endif %} {% endfor %}
-                            </span>
-
-                        </div>
-
-                        <p class="text-muted leading-relaxed">
-                            {{ review.comment }}
-                        </p>
-
-                        <p class="text-xs text-muted mt-3">
-                            Verified Purchase
-                        </p>
-
-                    </div>
-
-                    {% endfor %}
-
-                </div>
-
-                {% else %}
-
-                <div class="glass-card p-8 text-center">
-
-                    <p class="text-muted">
-                        No reviews yet.
-                    </p>
-
-                </div>
-
+            <div class="mb-10">
+                <span class="section-eyebrow">Customer Reviews</span>
+                <h2 class="section-title">What Customers Are Saying</h2>
+                {% if reviews and product.average_rating %}
+                <p class="text-muted mt-2">
+                    Average rating: <span class="text-gold font-medium">{{ product.average_rating }}/5</span>
+                </p>
                 {% endif %}
-
-            </section>
+            </div>
 
             {% if can_review %}
-
-            <section class="max-w-4xl mx-auto px-6 pb-20">
-
-                <div class="glass-card p-8">
-
-                    <h3 class="font-serif text-3xl text-brown mb-6">
-                        Write A Review
-                    </h3>
-
-                    <form method="POST">
-
-                        {% csrf_token %}
-
-                        <div class="space-y-4">
-
-                            {{ review_form.as_p }}
-
-                        </div>
-
-                        <button type="submit" class="btn-primary mt-6">
-
-                            Submit Review
-
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </section>
-
+            <div class="glass-card p-5 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <p class="text-sm text-brown">Purchased this piece? Share your thoughts with other shoppers.</p>
+                <button type="button" class="btn-secondary !text-xs" data-review-open>Write a Review</button>
+            </div>
+            {% elif review_eligibility == "awaiting_delivery" %}
+            <div class="glass-card p-5 mb-8 text-sm text-muted">
+                You can write a review once your order has been delivered.
+            </div>
+            {% elif review_eligibility == "pending_approval" %}
+            <div class="glass-card p-5 mb-8 text-sm text-muted">
+                Your review has been submitted and is awaiting approval.
+            </div>
+            {% elif review_eligibility == "already_reviewed" %}
+            <div class="glass-card p-5 mb-8 text-sm text-muted">
+                You have already reviewed this product. Thank you!
+            </div>
             {% endif %}
+
+            {% if reviews %}
+            <div class="space-y-6">
+                {% for review in reviews %}
+                <div class="glass-card p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-medium text-brown">{{ review.user.username }}</h4>
+                        <span class="text-gold">
+                            {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <p class="text-muted leading-relaxed">{{ review.comment }}</p>
+                    <p class="text-xs text-muted mt-3">Verified Purchase</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="glass-card p-8 text-center">
+                <p class="text-muted">No reviews yet. Be the first to share your experience.</p>
+            </div>
+            {% endif %}
+
         </div>
 
     </div>
 
 </section>
+
+{% if can_review %}
+{% include "reviews/review_modal.html" with product=product open=open_review_modal next_url=request.path %}
+{% endif %}
 
 <!-- Related Products -->
 
@@ -395,4 +354,10 @@
 
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+{% if can_review %}
+<script src="{% static 'js/reviews.js' %}"></script>
+{% endif %}
 {% endblock %}

@@ -7,6 +7,8 @@ from cart.models import CartItem
 from orders.models import Order
 from wishlist.models import Wishlist
 
+from reviews.eligibility import get_reviewable_items_for_order
+
 from .forms import (
     ProfileForm,
     ProfileSettingsForm,
@@ -36,12 +38,19 @@ def profile_dashboard(request):
     user = request.user
     profile = _get_profile(user)
     recent_orders = Order.objects.filter(user=user).order_by("-created_at")[:3]
+    recent_orders_data = [
+        {
+            "order": order,
+            "reviewable_items": get_reviewable_items_for_order(user, order),
+        }
+        for order in recent_orders
+    ]
     addresses = ShippingAddress.objects.filter(user=user)[:2]
 
     context = {
         **_profile_context(user, "dashboard"),
         "profile": profile,
-        "recent_orders": recent_orders,
+        "recent_orders_data": recent_orders_data,
         "addresses": addresses,
     }
 

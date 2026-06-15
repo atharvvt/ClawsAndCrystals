@@ -18,6 +18,9 @@ from accounts.models import ShippingAddress
 from products.inventory import validate_cart_stock
 
 from .forms import CheckoutForm
+from reviews.eligibility import get_reviewable_items_for_order
+
+from .cancellation import can_cancel_order, cancel_order
 from .models import Order, OrderItem
 from .payments import (
     RazorpayConfigError,
@@ -347,11 +350,19 @@ def my_orders_view(request):
         user=request.user,
     ).order_by("-created_at")
 
+    orders_data = [
+        {
+            "order": order,
+            "reviewable_items": get_reviewable_items_for_order(request.user, order),
+        }
+        for order in orders
+    ]
+
     return render(
         request,
         "orders/my_orders.html",
         {
-            "orders": orders,
+            "orders_data": orders_data,
         },
     )
 
@@ -364,10 +375,35 @@ def order_detail_view(request, order_id):
         user=request.user,
     )
 
+    reviewable_items = get_reviewable_items_for_order(request.user, order)
+    reviewable_product_ids = {item.product_id for item in reviewable_items}
+
     return render(
         request,
         "orders/order_detail.html",
         {
             "order": order,
+            "can_cancel": can_cancel_order(order),
+            "reviewable_items": reviewable_items,
+            "reviewable_product_ids": reviewable_product_ids,
         },
     )
+
+
+@login_required
+@require_POST
+def cancel_order_view(request, order_id):
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user,
+    )
+
+    success, message = cancel_order(order)
+
+    if success:
+        messages.success(request, message)
+    else:
+        messages.error(request, message)
+
+    return redirect("order_detail", order_id=order.id)
