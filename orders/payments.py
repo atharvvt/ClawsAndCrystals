@@ -103,6 +103,10 @@ def mark_order_paid(order, payment_id, signature=""):
         product_id__in=product_ids,
     ).delete()
 
+    from products.inventory import decrement_stock_for_order
+
+    decrement_stock_for_order(order)
+
     return True
 
 

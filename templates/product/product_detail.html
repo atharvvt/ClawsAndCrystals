@@ -169,9 +169,15 @@
 
                 <div class="flex flex-col sm:flex-row gap-4 mt-10">
 
+                    {% if product.stock > 0 %}
                     <a href="{% url 'add_to_cart' product.id %}" class="btn-primary flex-1 text-center">
                         Add To Cart
                     </a>
+                    {% else %}
+                    <span class="btn-primary flex-1 text-center opacity-50 cursor-not-allowed">
+                        Out of Stock
+                    </span>
+                    {% endif %}
 
                     {% if is_in_wishlist %}
 
@@ -224,6 +230,12 @@
                         What Customers Are Saying
                     </h2>
 
+                    {% if reviews and product.average_rating %}
+                    <p class="text-muted mt-2">
+                        Average rating: <span class="text-gold font-medium">{{ product.average_rating }}/5</span>
+                    </p>
+                    {% endif %}
+
                 </div>
 
                 {% if reviews %}
@@ -245,14 +257,9 @@
                                 {% for i in "12345" %}
 
                                 {% if forloop.counter <= review.rating %} ★ {% else %} ☆ {% endif %} {% endfor %}
-                                    </span>
-                            
-                                    
+                            </span>
 
                         </div>
-                            <span class="text-brown font-medium">
-        {{ product.average_rating }}/5
-    </span>
 
                         <p class="text-muted leading-relaxed">
                             {{ review.comment }}

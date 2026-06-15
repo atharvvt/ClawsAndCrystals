@@ -13,6 +13,10 @@ from django.views.decorators.http import require_POST
 
 from cart.models import CartItem
 
+from accounts.models import ShippingAddress
+
+from products.inventory import validate_cart_stock
+
 from .forms import CheckoutForm
 from .models import Order, OrderItem
 from .payments import (
@@ -98,6 +102,69 @@ def _handle_razorpay_order_failure(request, order, exc):
     messages.error(request, _payment_error_message(exc))
 
 
+def _save_shipping_address(user, form_data):
+    if not form_data.get("save_address"):
+        return
+
+    address_fields = {
+        "full_name": form_data["full_name"],
+        "email": form_data["email"],
+        "phone": form_data["phone"],
+        "address": form_data["address"],
+        "city": form_data["city"],
+        "state": form_data["state"],
+        "pincode": form_data["pincode"],
+    }
+
+    existing = ShippingAddress.objects.filter(
+        user=user,
+        **address_fields,
+    ).first()
+
+    if existing:
+        if form_data.get("address_label"):
+            existing.label = form_data["address_label"]
+            existing.save(update_fields=["label"])
+        return existing
+
+    has_default = ShippingAddress.objects.filter(
+        user=user,
+        is_default=True,
+    ).exists()
+
+    return ShippingAddress.objects.create(
+        user=user,
+        label=form_data.get("address_label") or "Home",
+        is_default=not has_default,
+        **address_fields,
+    )
+
+
+def _checkout_initial(user, selected_address=None):
+    if selected_address:
+        return selected_address.to_form_initial()
+
+    default_address = ShippingAddress.objects.filter(
+        user=user,
+        is_default=True,
+    ).first()
+
+    if default_address:
+        return default_address.to_form_initial()
+
+    initial = {}
+
+    if user.email:
+        initial["email"] = user.email
+
+    if user.get_full_name():
+        initial["full_name"] = user.get_full_name()
+    else:
+        initial["full_name"] = user.username
+
+    return initial
+
+
 @login_required
 def checkout_view(request):
     cart_items = _get_cart_items(request.user)
@@ -105,12 +172,27 @@ def checkout_view(request):
     if not cart_items.exists():
         return redirect("cart")
 
+    stock_errors = validate_cart_stock(cart_items)
+
+    if stock_errors:
+        for error in stock_errors:
+            messages.error(request, error)
+        return redirect("cart")
+
     total = _cart_total(cart_items)
+    saved_addresses = ShippingAddress.objects.filter(user=request.user)
+    selected_address = None
+    use_address_id = request.GET.get("use_address")
+
+    if use_address_id:
+        selected_address = saved_addresses.filter(id=use_address_id).first()
 
     if request.method == "POST":
         form = CheckoutForm(request.POST)
 
         if form.is_valid():
+            _save_shipping_address(request.user, form.cleaned_data)
+
             order = _create_order_from_cart(
                 request.user,
                 form.cleaned_data,
@@ -125,19 +207,10 @@ def checkout_view(request):
                 return redirect("checkout")
 
             return redirect("payment", order_id=order.id)
-
     else:
-        initial = {}
-
-        if request.user.email:
-            initial["email"] = request.user.email
-
-        if request.user.get_full_name():
-            initial["full_name"] = request.user.get_full_name()
-        else:
-            initial["full_name"] = request.user.username
-
-        form = CheckoutForm(initial=initial)
+        form = CheckoutForm(
+            initial=_checkout_initial(request.user, selected_address),
+        )
 
     return render(
         request,
@@ -146,6 +219,8 @@ def checkout_view(request):
             "cart_items": cart_items,
             "total": total,
             "form": form,
+            "saved_addresses": saved_addresses,
+            "selected_address": selected_address,
         },
     )
 

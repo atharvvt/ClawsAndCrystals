@@ -10,11 +10,8 @@ Shop — Claws & Crystals
 
 {% block content %}
 
-<!-- Hero -->
-
 <section class="pt-20 pb-10 px-6 text-center bg-cream">
 
-    ```
     {% if category %}
 
     <span class="section-eyebrow">
@@ -46,145 +43,147 @@ Shop — Claws & Crystals
     </p>
 
     {% endif %}
-    ```
 
 </section>
 
-<!-- Product Listing -->
-
 <section class="pb-20 px-6 bg-cream min-h-screen">
 
-    ```
     <div class="max-w-7xl mx-auto">
 
-        <!-- Search Results -->
-
         {% if query %}
-
         <div class="text-center mb-8">
-
             <p class="text-muted">
-
                 Showing results for
-
-                <span class="text-brown font-medium">
-                    "{{ query }}"
-                </span>
-
+                <span class="text-brown font-medium">"{{ query }}"</span>
             </p>
-
         </div>
-
         {% endif %}
 
-        <!-- Category Filters -->
-
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
-
+        <div class="flex flex-wrap justify-center gap-3 mb-8">
             <a href="{% url 'product_list' %}"
-                class="glass-card px-5 py-2 text-sm text-brown hover:text-gold transition-colors">
+                class="glass-card px-5 py-2 text-sm {% if not category %}text-gold border-gold/40{% else %}text-brown hover:text-gold{% endif %} transition-colors">
                 All
             </a>
-
             {% for category_item in categories %}
-
             <a href="{% url 'category_products' category_item.slug %}"
-                class="glass-card px-5 py-2 text-sm text-brown hover:text-gold transition-colors">
+                class="glass-card px-5 py-2 text-sm {% if category and category.id == category_item.id %}text-gold border-gold/40{% else %}text-brown hover:text-gold{% endif %} transition-colors">
                 {{ category_item.name }}
             </a>
-
             {% endfor %}
-
         </div>
 
-        <!-- Products Grid -->
+        <form method="get" class="glass-card p-6 mb-10">
+            {% if category %}
+            <input type="hidden" name="category" value="{{ category.slug }}">
+            {% endif %}
+            {% if query %}
+            <input type="hidden" name="q" value="{{ query }}">
+            {% endif %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div>
+                    <label class="text-xs uppercase tracking-wider text-muted mb-2 block">Sort</label>
+                    <select name="sort" class="glass-card p-3 w-full text-sm">
+                        <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest</option>
+                        <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Price: High to Low</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs uppercase tracking-wider text-muted mb-2 block">Material</label>
+                    <select name="material" class="glass-card p-3 w-full text-sm">
+                        <option value="">All materials</option>
+                        {% for mat in materials %}
+                        <option value="{{ mat }}" {% if material == mat %}selected{% endif %}>{{ mat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs uppercase tracking-wider text-muted mb-2 block">Min Price</label>
+                    <input type="number" name="min_price" value="{{ min_price }}" min="0" step="1"
+                        class="glass-card p-3 w-full text-sm" placeholder="Min ₹">
+                </div>
+
+                <div>
+                    <label class="text-xs uppercase tracking-wider text-muted mb-2 block">Max Price</label>
+                    <input type="number" name="max_price" value="{{ max_price }}" min="0" step="1"
+                        class="glass-card p-3 w-full text-sm" placeholder="Max ₹">
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" class="btn-primary w-full text-center">Apply Filters</button>
+                </div>
+            </div>
+
+            {% if tags %}
+            <div class="flex flex-wrap gap-2 mt-4">
+                {% for tag_item in tags %}
+                <a href="?tag={{ tag_item.name }}{% if sort %}&sort={{ sort }}{% endif %}{% if material %}&material={{ material }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                    class="px-3 py-1 rounded-full text-sm border {% if tag == tag_item.name %}border-gold text-gold bg-gold/10{% else %}border-gold/20 text-brown hover:text-gold{% endif %}">
+                    {{ tag_item.name }}
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </form>
 
         {% if products %}
-
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-
             {% for product in products %}
-
             <a href="{% url 'product_detail' product.slug %}" class="product-card group">
-
                 <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 bg-blush">
-
                     {% if product.primary_image %}
-
                     <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-
                     {% else %}
-
-                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">
-                        ◈
-                    </div>
-
+                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">◈</div>
                     {% endif %}
-
                 </div>
-
-                <p class="font-serif text-lg text-brown font-medium leading-tight">
-                    {{ product.name }}
-                </p>
-
+                <p class="font-serif text-lg text-brown font-medium leading-tight">{{ product.name }}</p>
                 {% if product.discounted_price %}
-
                 <div class="mt-1 flex items-center gap-2">
-
-                    <span class="text-gold font-medium">
-                        ₹{{ product.discounted_price }}
-                    </span>
-
-                    <span class="text-muted line-through text-sm">
-                        ₹{{ product.price }}
-                    </span>
-
+                    <span class="text-gold font-medium">₹{{ product.discounted_price }}</span>
+                    <span class="text-muted line-through text-sm">₹{{ product.price }}</span>
                 </div>
-
                 {% else %}
-
-                <p class="text-gold text-sm font-sans mt-1">
-                    ₹{{ product.price }}
-                </p>
-
+                <p class="text-gold text-sm font-sans mt-1">₹{{ product.price }}</p>
                 {% endif %}
-
-                <span
-                    class="inline-block mt-3 text-xs uppercase tracking-wider text-muted border-b border-muted/30 pb-px group-hover:text-gold group-hover:border-gold transition-colors duration-300">
+                <span class="inline-block mt-3 text-xs uppercase tracking-wider text-muted border-b border-muted/30 pb-px group-hover:text-gold group-hover:border-gold transition-colors duration-300">
                     View Details →
                 </span>
-
             </a>
-
             {% endfor %}
-
         </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="flex justify-center items-center gap-2 mt-12">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}{% if material %}&material={{ material }}{% endif %}{% if tag %}&tag={{ tag }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                class="glass-card px-4 py-2 text-sm text-brown hover:text-gold">Previous</a>
+            {% endif %}
+
+            <span class="text-sm text-muted px-4">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}{% if material %}&material={{ material }}{% endif %}{% if tag %}&tag={{ tag }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                class="glass-card px-4 py-2 text-sm text-brown hover:text-gold">Next</a>
+            {% endif %}
+        </div>
+        {% endif %}
 
         {% else %}
-
-        <!-- Empty State -->
-
         <div class="text-center py-24">
-
-            <h3 class="font-serif text-3xl text-brown">
-                No products found
-            </h3>
-
-            <p class="text-muted mt-3">
-                Try searching with a different keyword or browse another category.
-            </p>
-
-            <a href="{% url 'product_list' %}" class="btn-primary mt-8 inline-block">
-                View All Products
-            </a>
-
+            <h3 class="font-serif text-3xl text-brown">No products found</h3>
+            <p class="text-muted mt-3">Try adjusting your filters or browse another category.</p>
+            <a href="{% url 'product_list' %}" class="btn-primary mt-8 inline-block">View All Products</a>
         </div>
-
         {% endif %}
 
     </div>
-    ```
 
 </section>
 

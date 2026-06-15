@@ -24,6 +24,17 @@ Shopping Cart
 
         {% if cart_items %}
 
+        {% if stock_errors %}
+        <div class="glass-card p-4 mb-6 border border-red-200">
+            <p class="text-red-600 text-sm font-medium mb-2">Stock issues in your cart:</p>
+            <ul class="text-sm text-red-600 space-y-1">
+                {% for error in stock_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
         <div class="space-y-6">
 
             {% for item in cart_items %}
@@ -77,9 +88,13 @@ Shopping Cart
 
             </h2>
 
+            {% if stock_errors %}
+            <p class="text-sm text-muted mt-4">Please fix stock issues before checkout.</p>
+            {% else %}
             <a href="{% url 'checkout' %}" class="btn-primary">
                 Proceed To Checkout
             </a>
+            {% endif %}
 
         </div>
 
