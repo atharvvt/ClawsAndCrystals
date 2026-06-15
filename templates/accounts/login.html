@@ -33,6 +33,10 @@
             <button type="submit" class="btn-primary w-full mt-2">Login</button>
         </form>
 
+        <p class="text-center text-sm mt-4">
+            <a href="{% url 'password_reset' %}" class="text-gold hover:underline">Forgot password?</a>
+        </p>
+
         <p class="text-center text-sm text-muted mt-6">
             Don't have an account?
             <a href="{% url 'register' %}" class="text-gold hover:underline">Register</a>

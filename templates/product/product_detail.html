@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-{{ product.name }} — Claws & Crystals
+{% if product.seo_title %}{{ product.seo_title }}{% else %}{{ product.name }} — Claws & Crystals{% endif %}
+{% endblock %}
+
+{% block meta_description %}
+{% if product.seo_description %}{{ product.seo_description }}{% else %}{{ product.description|truncatewords:30 }}{% endif %}
 {% endblock %}
 
 {% block content %}

@@ -107,6 +107,11 @@ def mark_order_paid(order, payment_id, signature=""):
 
     decrement_stock_for_order(order)
 
+    from .emails import send_admin_new_order, send_order_confirmation
+
+    send_order_confirmation(order)
+    send_admin_new_order(order)
+
     return True
 
 

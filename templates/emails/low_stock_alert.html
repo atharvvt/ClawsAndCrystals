@@ -1,0 +1,23 @@
+{% extends "emails/base_email.html" %}
+
+{% block email_content %}
+<p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
+    <strong>{{ product.name }}</strong> is running low on stock.
+</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+    <tr>
+        <td style="padding:8px 0;font-size:14px;color:#9A8070;">Stock remaining</td>
+        <td style="padding:8px 0;font-size:14px;text-align:right;font-weight:600;color:#b45309;">{{ product.stock }}</td>
+    </tr>
+    <tr>
+        <td style="padding:8px 0;font-size:14px;color:#9A8070;">Status</td>
+        <td style="padding:8px 0;font-size:14px;text-align:right;">{{ product.status }}</td>
+    </tr>
+</table>
+<p style="margin:32px 0 0;text-align:center;">
+    <a href="{{ site_url }}/admin/products/product/{{ product.id }}/change/"
+        style="display:inline-block;background:#3D1F0D;color:#FAF7F2;padding:14px 32px;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;">
+        Update Stock
+    </a>
+</p>
+{% endblock %}

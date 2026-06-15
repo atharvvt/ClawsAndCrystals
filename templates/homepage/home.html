@@ -71,6 +71,35 @@
 </section>
 
 
+{% if featured_products %}
+<!-- ░░ FEATURED COLLECTION ░░ -->
+<section class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="section-header">
+            <span class="section-eyebrow">Curated</span>
+            <h2 class="section-title">Featured Collection</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            {% for product in featured_products %}
+            <a href="{% url 'product_detail' product.slug %}" class="product-card group">
+                <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 bg-blush">
+                    {% if product.primary_image %}
+                    <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}"
+                        class="product-card__image w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">◈</div>
+                    {% endif %}
+                </div>
+                <p class="font-serif text-lg text-brown font-medium leading-tight">{{ product.name }}</p>
+                <p class="text-gold text-sm font-sans mt-1">₹{{ product.discounted_price|default:product.price }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
 <!-- ░░ NEW ARRIVALS ░░ -->
 <section class="py-24 px-6 bg-cream">
     <div class="max-w-7xl mx-auto">

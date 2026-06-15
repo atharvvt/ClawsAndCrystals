@@ -1,0 +1,20 @@
+Hi {{ order.full_name }},
+
+Thank you for your order at {{ site_name }}! Your payment was successful.
+
+Order #{{ order.id }}
+Total paid: ₹{{ order.total_amount }}
+Payment ID: {{ order.razorpay_payment_id }}
+
+Items:
+{% for item in items %}- {{ item.product.name }} × {{ item.quantity }} — ₹{{ item.price }}
+{% endfor %}
+
+Shipping to:
+{{ order.address }}
+{{ order.city }}, {{ order.state }} — {{ order.pincode }}
+{{ order.phone }}
+
+View your order: {{ order_url }}
+
+— {{ site_name }}

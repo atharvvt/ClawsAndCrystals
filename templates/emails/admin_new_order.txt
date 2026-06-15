@@ -1,0 +1,12 @@
+New paid order #{{ order.id }}
+
+Customer: {{ order.full_name }}
+Email: {{ order.email }}
+Phone: {{ order.phone }}
+Total: ₹{{ order.total_amount }}
+
+Items:
+{% for item in items %}- {{ item.product.name }} × {{ item.quantity }} — ₹{{ item.price }}
+{% endfor %}
+
+Admin: {{ site_url }}/admin/orders/order/{{ order.id }}/change/

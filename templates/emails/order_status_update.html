@@ -1,0 +1,15 @@
+{% extends "emails/base_email.html" %}
+
+{% block email_content %}
+<p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi {{ order.full_name }},</p>
+<p style="margin:0 0 24px;font-size:15px;line-height:1.6;">
+    Your order <strong>#{{ order.id }}</strong> status has been updated to
+    <strong style="color:#C9A84C;">{{ new_status_display }}</strong>.
+</p>
+
+<p style="margin:32px 0 0;text-align:center;">
+    <a href="{{ order_url }}" style="display:inline-block;background:#C9A84C;color:#FAF7F2;padding:14px 32px;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;">
+        View Order Details
+    </a>
+</p>
+{% endblock %}

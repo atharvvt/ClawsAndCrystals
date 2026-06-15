@@ -1,0 +1,7 @@
+New contact form submission
+
+From: {{ suggestion.name }} <{{ suggestion.email }}>
+Subject: {{ suggestion.subject }}
+
+Message:
+{{ suggestion.message }}

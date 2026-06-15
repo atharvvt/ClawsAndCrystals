@@ -1,5 +1,11 @@
 from django.urls import path
 
+from .password_reset_views import (
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
 from .profile_views import (
     profile_address_add,
     profile_address_delete,
@@ -17,6 +23,26 @@ urlpatterns = [
     path("register/", register_view, name="register"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
+    path(
+        "password-reset/",
+        PasswordResetView.as_view(),
+        name="password_reset",
+    ),
+    path(
+        "password-reset/done/",
+        PasswordResetDoneView.as_view(),
+        name="password_reset_done",
+    ),
+    path(
+        "password-reset/<uidb64>/<token>/",
+        PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "password-reset/complete/",
+        PasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
     path("profile/", profile_dashboard, name="profile"),
     path("profile/edit/", profile_edit, name="profile_edit"),
     path("profile/settings/", profile_settings, name="profile_settings"),

@@ -1,0 +1,7 @@
+Hi {{ order.full_name }},
+
+Your order #{{ order.id }} status has been updated to: {{ new_status_display }}
+
+View order: {{ order_url }}
+
+— {{ site_name }}

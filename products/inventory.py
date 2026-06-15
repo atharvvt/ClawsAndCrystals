@@ -47,3 +47,7 @@ def decrement_stock_for_order(order):
             product.stock = 0
             product.status = "out_of_stock"
             product.save(update_fields=["stock", "status"])
+        elif product.stock <= 5:
+            from products.emails import send_low_stock_alert
+
+            send_low_stock_alert(product)

@@ -1,0 +1,7 @@
+Low stock alert: {{ product.name }}
+
+Current stock: {{ product.stock }}
+SKU: {{ product.sku|default:"N/A" }}
+Status: {{ product.status }}
+
+Admin: {{ site_url }}/admin/products/product/{{ product.id }}/change/

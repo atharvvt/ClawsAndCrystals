@@ -68,6 +68,47 @@ Logged-in users can manage their account at `/accounts/profile/`:
 
 Click your username in the navbar to open your profile.
 
+## Email setup
+
+**Development (no SMTP):** Leave `EMAIL_HOST` unset in `.env`. Django prints all emails to the terminal console automatically.
+
+**Production SMTP** — add to `.env` (see `.env.example`):
+
+```
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=Claws & Crystals <noreply@clawsandcrystals.in>
+ADMIN_ORDER_EMAIL=admin@example.com
+SITE_URL=https://yourdomain.com
+SITE_NAME=Claws & Crystals
+```
+
+For Gmail, use an [App Password](https://myaccount.google.com/apppasswords) (not your regular password).
+
+### What sends email
+
+| Trigger | Recipient |
+|---------|-----------|
+| Payment confirmed | Customer + admin |
+| Order shipped / delivered / cancelled | Customer (if opted in) |
+| Contact form submitted | Admin |
+| Password reset requested | User |
+| Stock drops to 5 or below | Admin |
+
+Customers can disable order emails in **Profile → Preferences** (`receive_order_updates`).
+
+### Maintenance
+
+Cancel abandoned unpaid orders (default: older than 48 hours):
+
+```bash
+python3 manage.py cancel_unpaid_orders
+python3 manage.py cancel_unpaid_orders --hours 24
+```
+
 ## Design system
 
 All brand colors and fonts are defined in one file:
@@ -78,7 +119,8 @@ Edit the `:root` variables there to retheme the site. Tailwind utilities (`bg-go
 
 If you change font families, also update the Google Fonts link in [`templates/base.html`](templates/base.html).
 
+## Tests
 
 ```bash
-python3 manage.py test orders
+python3 manage.py test
 ```

@@ -1,7 +1,7 @@
 import re
 
 from django import forms
-from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm, SetPasswordForm, UserCreationForm
 from django.contrib.auth.models import User
 
 from .models import ShippingAddress, UserProfile
@@ -129,6 +129,14 @@ class ShippingAddressForm(forms.ModelForm):
 
 
 class StyledPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs.update({"class": FIELD_CLASS})
+
+
+class StyledSetPasswordForm(SetPasswordForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

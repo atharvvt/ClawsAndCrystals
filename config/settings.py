@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "homepage",
     "products",
     "accounts",
-    "orders",
+    "orders.apps.OrdersConfig",
     "cart",
     "reviews",
     "django.contrib.admin",
@@ -141,3 +141,31 @@ LOGIN_URL = "/accounts/login/"
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
 RAZORPAY_WEBHOOK_SECRET = os.environ.get("RAZORPAY_WEBHOOK_SECRET", "")
+
+# Site
+SITE_NAME = os.environ.get("SITE_NAME", "Claws & Crystals")
+SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000").rstrip("/")
+
+# Email — uses console backend in dev when SMTP is not configured
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL",
+    "Claws & Crystals <noreply@clawsandcrystals.in>",
+)
+ADMIN_ORDER_EMAIL = os.environ.get("ADMIN_ORDER_EMAIL", "")
+
+if EMAIL_HOST:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+ADMINS = [
+    ("Store Admin", ADMIN_ORDER_EMAIL),
+] if ADMIN_ORDER_EMAIL else []
+
+# Password reset links
+PASSWORD_RESET_TIMEOUT = 3600
