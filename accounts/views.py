@@ -1,11 +1,20 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
+from cart.utils import merge_session_cart_into_user
+
 from .forms import RegisterForm
+
+
+def _redirect_after_auth(request):
+    next_url = request.GET.get("next") or request.POST.get("next")
+    if next_url:
+        return redirect(next_url)
+    return redirect("home")
 
 
 @never_cache
@@ -23,12 +32,10 @@ def register_view(request):
 
             user = form.save()
 
-            login(
-                request,
-                user,
-            )
-
-            return redirect("home")
+            login(request, user)
+            merge_session_cart_into_user(request)
+            messages.success(request, "Welcome! Your cart has been saved.")
+            return _redirect_after_auth(request)
 
     else:
         form = RegisterForm()
@@ -53,7 +60,8 @@ def login_view(request):
 
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect("home")
+        merge_session_cart_into_user(request)
+        return _redirect_after_auth(request)
 
     return render(
         request,
@@ -61,11 +69,14 @@ def login_view(request):
         {
             "form": form,
             "error": "Invalid username or password" if request.method == "POST" else None,
+            "next": request.GET.get("next", ""),
         }
     )
 
 
 def logout_view(request):
+
+    from django.contrib.auth import logout
 
     logout(request)
 

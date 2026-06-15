@@ -11,16 +11,17 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from cart.models import CartItem
-
 from accounts.models import ShippingAddress
-
-from products.inventory import validate_cart_stock
-
-from .forms import CheckoutForm
+from cart.utils import (
+    clear_applied_coupon_code,
+    get_applied_coupon_code,
+    get_cart_lines,
+)
+from products.inventory import build_variant_label, get_unit_price, validate_cart_stock
 from reviews.eligibility import get_reviewable_items_for_order
 
 from .cancellation import can_cancel_order, cancel_order
+from .forms import CheckoutForm
 from .models import Order, OrderItem
 from .payments import (
     RazorpayConfigError,
@@ -31,19 +32,12 @@ from .payments import (
     verify_payment_signature,
     verify_webhook_signature,
 )
+from .pricing import compute_order_totals
 
 logger = logging.getLogger(__name__)
 
 
-def _get_cart_items(user):
-    return CartItem.objects.filter(user=user).select_related("product")
-
-
-def _cart_total(cart_items):
-    return sum(item.total_price for item in cart_items)
-
-
-def _create_order_from_cart(user, form_data, cart_items, total):
+def _create_order_from_cart(user, form_data, cart_lines, totals):
     with transaction.atomic():
         order = Order.objects.create(
             user=user,
@@ -54,18 +48,30 @@ def _create_order_from_cart(user, form_data, cart_items, total):
             city=form_data["city"],
             state=form_data["state"],
             pincode=form_data["pincode"],
-            total_amount=total,
+            subtotal_amount=totals.subtotal_amount,
+            discount_amount=totals.discount_amount,
+            shipping_amount=totals.shipping_amount,
+            total_amount=totals.total_amount,
+            coupon_code=totals.coupon_code,
+            applied_coupon=totals.coupon,
         )
 
-        for item in cart_items:
-            price = item.product.discounted_price or item.product.price
+        for line in cart_lines:
+            price = get_unit_price(line.product, getattr(line, "variant", None))
+            variant = getattr(line, "variant", None)
 
             OrderItem.objects.create(
                 order=order,
-                product=item.product,
-                quantity=item.quantity,
+                product=line.product,
+                variant=variant,
+                variant_label=build_variant_label(variant),
+                quantity=line.quantity,
                 price=price,
             )
+
+        if totals.coupon:
+            totals.coupon.used_count += 1
+            totals.coupon.save(update_fields=["used_count"])
 
     return order
 
@@ -170,19 +176,19 @@ def _checkout_initial(user, selected_address=None):
 
 @login_required
 def checkout_view(request):
-    cart_items = _get_cart_items(request.user)
+    cart_lines = get_cart_lines(request)
 
-    if not cart_items.exists():
+    if not cart_lines:
         return redirect("cart")
 
-    stock_errors = validate_cart_stock(cart_items)
+    stock_errors = validate_cart_stock(cart_lines)
 
     if stock_errors:
         for error in stock_errors:
             messages.error(request, error)
         return redirect("cart")
 
-    total = _cart_total(cart_items)
+    coupon_code = get_applied_coupon_code(request)
     saved_addresses = ShippingAddress.objects.filter(user=request.user)
     selected_address = None
     use_address_id = request.GET.get("use_address")
@@ -190,18 +196,41 @@ def checkout_view(request):
     if use_address_id:
         selected_address = saved_addresses.filter(id=use_address_id).first()
 
+    pincode = ""
+    state = ""
+
+    if selected_address:
+        pincode = selected_address.pincode
+        state = selected_address.state
+
     if request.method == "POST":
         form = CheckoutForm(request.POST)
 
         if form.is_valid():
+            pincode = form.cleaned_data["pincode"]
+            state = form.cleaned_data["state"]
+            totals = compute_order_totals(
+                cart_lines,
+                coupon_code=coupon_code,
+                pincode=pincode,
+                state=state,
+            )
+
+            if coupon_code and totals.coupon_error:
+                clear_applied_coupon_code(request)
+                messages.warning(request, totals.coupon_error)
+                return redirect("cart")
+
             _save_shipping_address(request.user, form.cleaned_data)
 
             order = _create_order_from_cart(
                 request.user,
                 form.cleaned_data,
-                cart_items,
-                total,
+                cart_lines,
+                totals,
             )
+
+            clear_applied_coupon_code(request)
 
             try:
                 _ensure_razorpay_order(order)
@@ -215,12 +244,20 @@ def checkout_view(request):
             initial=_checkout_initial(request.user, selected_address),
         )
 
+    totals = compute_order_totals(
+        cart_lines,
+        coupon_code=coupon_code,
+        pincode=pincode,
+        state=state,
+    )
+
     return render(
         request,
         "orders/checkout.html",
         {
-            "cart_items": cart_items,
-            "total": total,
+            "cart_items": cart_lines,
+            "totals": totals,
+            "coupon_code": totals.coupon_code,
             "form": form,
             "saved_addresses": saved_addresses,
             "selected_address": selected_address,

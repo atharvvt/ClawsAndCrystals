@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static product_extras %}
 
 {% block title %}
 {% if product.seo_title %}{{ product.seo_title }}{% else %}{{ product.name }} — Claws & Crystals{% endif %}
@@ -7,6 +7,14 @@
 
 {% block meta_description %}
 {% if product.seo_description %}{{ product.seo_description }}{% else %}{{ product.description|truncatewords:30 }}{% endif %}
+{% endblock %}
+
+{% block extra_meta %}
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{% if product.seo_description %}{{ product.seo_description }}{% else %}{{ product.description|truncatewords:30 }}{% endif %}">
+{% if og_image_url %}<meta property="og:image" content="{{ og_image_url }}">{% endif %}
+<meta property="og:url" content="{{ share_url }}">
+<meta property="og:type" content="product">
 {% endblock %}
 
 {% block content %}
@@ -17,43 +25,44 @@
 
         <div class="grid lg:grid-cols-2 gap-14 items-start">
 
-            <!-- Product Images -->
-
             <div>
-
-                <!-- Main Image -->
-
-                {% if product.primary_image %}
+                {% with gallery_images=product.images.all %}
+                {% if gallery_images %}
                 <div class="glass-card overflow-hidden">
-
-                    <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}"
+                    {% with first_image=gallery_images.0 %}
+                    <img id="main-product-image"
+                        src="{% product_image_url first_image.image 'product_gallery' %}"
+                        alt="{{ first_image.alt_text|default:product.name }}"
                         class="w-full aspect-square object-cover">
-
+                    {% endwith %}
                 </div>
-                {% endif %}
 
-                <!-- Thumbnails -->
-
-                {% if product.images.count > 1 %}
+                {% if gallery_images|length > 1 %}
                 <div class="grid grid-cols-4 gap-4 mt-4">
-
-                    {% for image in product.images.all %}
-
-                    <div class="glass-card overflow-hidden">
-
-                        <img src="{{ image.image.url }}" alt="{{ image.alt_text }}"
+                    {% for image in gallery_images %}
+                    <button type="button"
+                        class="gallery-thumb glass-card overflow-hidden {% if forloop.first %}is-active{% endif %}"
+                        data-gallery-thumb
+                        data-full-url="{{ image.image.url }}"
+                        data-alt="{{ image.alt_text|default:product.name }}"
+                        aria-label="View {{ image.alt_text|default:product.name }}">
+                        <img src="{% product_image_url image.image 'product_thumb' %}"
+                            alt="{{ image.alt_text|default:product.name }}"
                             class="aspect-square object-cover w-full">
-
-                    </div>
-
+                    </button>
                     {% endfor %}
-
                 </div>
                 {% endif %}
-
+                {% elif product.primary_image %}
+                <div class="glass-card overflow-hidden">
+                    <img id="main-product-image"
+                        src="{% product_image_url product.primary_image.image 'product_gallery' %}"
+                        alt="{{ product.primary_image.alt_text|default:product.name }}"
+                        class="w-full aspect-square object-cover">
+                </div>
+                {% endif %}
+                {% endwith %}
             </div>
-
-            <!-- Product Info -->
 
             <div class="lg:sticky lg:top-28">
 
@@ -65,54 +74,56 @@
                     {{ product.name }}
                 </h1>
 
-                <!-- Price -->
-
-                <div class="mt-6">
-
-                    {% if product.discounted_price %}
-
-                    <div class="flex items-center gap-4">
-
-                        <span class="text-3xl font-serif text-gold">
-                            ₹{{ product.discounted_price }}
-                        </span>
-
-                        <span class="text-lg text-gray-400 line-through">
-                            ₹{{ product.price }}
-                        </span>
-
-                    </div>
-
-                    {% else %}
-
-                    <span class="text-3xl font-serif text-gold">
-                        ₹{{ product.price }}
-                    </span>
-
-                    {% endif %}
-
+                <div class="mt-6" id="product-price">
+                    <span class="text-3xl font-serif text-gold" id="display-price">₹{{ display_price }}</span>
                 </div>
+
+                {% if variants %}
+                <div class="glass-card p-6 mt-8 space-y-4" id="variant-selectors">
+                    {% if variant_options.metals %}
+                    <div class="form-field">
+                        <label class="form-label" for="variant-metal">Metal</label>
+                        <select id="variant-metal" class="cc-select variant-select" data-field="metal">
+                            <option value="">Select metal</option>
+                            {% for value in variant_options.metals %}
+                            <option value="{{ value }}" {% if selected_variant.metal == value %}selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    {% if variant_options.sizes %}
+                    <div class="form-field">
+                        <label class="form-label" for="variant-size">Size</label>
+                        <select id="variant-size" class="cc-select variant-select" data-field="size">
+                            <option value="">Select size</option>
+                            {% for value in variant_options.sizes %}
+                            <option value="{{ value }}" {% if selected_variant.size == value %}selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    {% if variant_options.stone_colors %}
+                    <div class="form-field">
+                        <label class="form-label" for="variant-stone">Stone color</label>
+                        <select id="variant-stone" class="cc-select variant-select" data-field="stone_color">
+                            <option value="">Select stone</option>
+                            {% for value in variant_options.stone_colors %}
+                            <option value="{{ value }}" {% if selected_variant.stone_color == value %}selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
                 <div class="w-16 h-px bg-gold my-8"></div>
 
-                <!-- Description -->
-
                 <div>
-
-                    <h3 class="font-medium text-brown mb-3">
-                        Description
-                    </h3>
-
-                    <p class="text-muted leading-relaxed font-light">
-                        {{ product.description }}
-                    </p>
-
+                    <h3 class="font-medium text-brown mb-3">Description</h3>
+                    <p class="text-muted leading-relaxed font-light">{{ product.description }}</p>
                 </div>
 
-                <!-- Product Details -->
-
                 <div class="glass-card p-6 mt-8 space-y-4">
-
                     {% if product.material %}
                     <div class="flex justify-between">
                         <span class="text-muted">Material</span>
@@ -129,104 +140,93 @@
 
                     <div class="flex justify-between">
                         <span class="text-muted">SKU</span>
-                        <span class="text-brown">{{ product.sku }}</span>
+                        <span class="text-brown" id="display-sku">{{ display_sku|default:"—" }}</span>
                     </div>
 
                     <div class="flex justify-between">
-
-                        <span class="text-muted">
-                            Availability
+                        <span class="text-muted">Availability</span>
+                        <span class="{% if is_in_stock %}text-green-600{% else %}text-red-500{% endif %}" id="display-stock">
+                            {% if is_in_stock %}In Stock{% else %}Out of Stock{% endif %}
                         </span>
-
-                        {% if product.stock > 0 %}
-                        <span class="text-green-600">
-                            In Stock
-                        </span>
-                        {% else %}
-                        <span class="text-red-500">
-                            Out of Stock
-                        </span>
-                        {% endif %}
-
                     </div>
-
                 </div>
 
-                <!-- Tags -->
-
                 {% if product.tags.all %}
-
                 <div class="flex flex-wrap gap-2 mt-8">
-
                     {% for tag in product.tags.all %}
-
                     <span class="px-3 py-1 rounded-full bg-white border border-gold/20 text-sm text-brown">
                         {{ tag.name }}
                     </span>
-
                     {% endfor %}
-
                 </div>
-
                 {% endif %}
 
-                <!-- Actions -->
-
-                <div class="flex flex-col sm:flex-row gap-4 mt-10">
-
-                    {% if product.stock > 0 %}
-                    <a href="{% url 'add_to_cart' product.id %}" class="btn-primary flex-1 text-center">
+                <div class="flex flex-col sm:flex-row gap-4 mt-10" id="product-actions">
+                    {% if is_in_stock %}
+                    <a href="{% url 'add_to_cart' product.id %}{% if selected_variant %}?variant={{ selected_variant.id }}{% endif %}"
+                        id="add-to-cart-btn" class="btn-primary flex-1 text-center">
                         Add To Cart
                     </a>
                     {% else %}
-                    <span class="btn-primary is-disabled flex-1 text-center">Out of Stock</span>
+                    <div class="flex-1 glass-card p-5">
+                        <p class="text-sm text-brown mb-3">Notify me when this item is back in stock.</p>
+                        <form method="post" action="{% url 'notify_stock' product.slug %}" class="flex flex-col sm:flex-row gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="variant_id" id="notify-variant-id" value="{% if selected_variant %}{{ selected_variant.id }}{% endif %}">
+                            <input type="email" name="email" value="{{ notify_email }}" placeholder="your@email.com" class="cc-input flex-1" required>
+                            <button type="submit" class="btn-secondary !text-xs">Notify Me</button>
+                        </form>
+                    </div>
                     {% endif %}
 
-                    {% if is_in_wishlist %}
-
-                    <a href="{% url 'toggle_wishlist' product.id %}" class="glass-card px-6 py-3 text-center">
-                        ♥ Saved
-                    </a>
-
+                    {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'toggle_wishlist' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="glass-card px-6 py-3 text-center w-full">
+                            {% if is_in_wishlist %}♥ Saved{% else %}♡ Wishlist{% endif %}
+                        </button>
+                    </form>
                     {% else %}
-
-                    <a href="{% url 'toggle_wishlist' product.id %}" class="glass-card px-6 py-3 text-center">
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="glass-card px-6 py-3 text-center">
                         ♡ Wishlist
                     </a>
-
                     {% endif %}
-
                 </div>
 
-                <!-- Trust Section -->
+                <div class="flex flex-wrap gap-3 mt-6">
+                    <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer"
+                        class="btn-secondary !text-xs">Share on WhatsApp</a>
+                    <button type="button" id="copy-link-btn" class="btn-secondary !text-xs"
+                        data-share-url="{{ share_url }}">Copy link</button>
+                    <form method="post" action="{% url 'compare_add' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary !text-xs"
+                            {% if in_compare or compare_full and not in_compare %}disabled{% endif %}>
+                            {% if in_compare %}In compare{% elif compare_full %}Compare full{% else %}Add to compare{% endif %}
+                        </button>
+                    </form>
+                </div>
 
                 <div class="glass-card p-6 mt-8 space-y-3">
-
                     <div class="flex items-center gap-3 text-sm text-muted font-light">
                         <span class="text-gold">✦</span>
                         Authentic handcrafted piece
                     </div>
-
                     <div class="flex items-center gap-3 text-sm text-muted font-light">
                         <span class="text-gold">✦</span>
                         Insured nationwide delivery
                     </div>
-
                     <div class="flex items-center gap-3 text-sm text-muted font-light">
                         <span class="text-gold">✦</span>
                         7-day easy returns
                     </div>
-
                 </div>
 
             </div>
 
         </div>
 
-        <!-- Customer Reviews (full width, outside product grid) -->
-
         <div class="mt-20 border-t border-gold/10 pt-16">
-
             <div class="mb-10">
                 <span class="section-eyebrow">Customer Reviews</span>
                 <h2 class="section-title">What Customers Are Saying</h2>
@@ -278,8 +278,34 @@
                 <p class="text-muted">No reviews yet. Be the first to share your experience.</p>
             </div>
             {% endif %}
-
         </div>
+
+        {% if recently_viewed %}
+        <div class="mt-20 border-t border-gold/10 pt-16">
+            <div class="section-header mb-12">
+                <span class="section-eyebrow">Recently Viewed</span>
+                <h2 class="section-title">Continue Browsing</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for item in recently_viewed %}
+                <div class="product-card group relative">
+                    <a href="{% url 'product_detail' item.slug %}">
+                        <div class="glass-card overflow-hidden">
+                            {% if item.primary_image %}
+                            <img src="{% product_image_url item.primary_image.image 'product_card' %}"
+                                alt="{{ item.name }}"
+                                class="aspect-square object-cover w-full transition-transform duration-500 group-hover:scale-105">
+                            {% endif %}
+                        </div>
+                        <h3 class="font-serif text-xl text-brown mt-4">{{ item.name }}</h3>
+                        <p class="text-gold mt-2">₹{{ item.discounted_price|default:item.price }}</p>
+                    </a>
+                    <button type="button" class="quick-view-btn" data-quick-view="{{ item.slug }}">Quick view</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
     </div>
 
@@ -289,74 +315,47 @@
 {% include "reviews/review_modal.html" with product=product open=open_review_modal next_url=request.path %}
 {% endif %}
 
-<!-- Related Products -->
-
 {% if related_products %}
-
 <section class="pb-20 px-6">
-
     <div class="max-w-7xl mx-auto">
-
         <div class="section-header mb-12">
-
-            <span class="section-eyebrow">
-                You May Also Like
-            </span>
-
-            <h2 class="section-title">
-                Related Products
-            </h2>
-
+            <span class="section-eyebrow">You May Also Like</span>
+            <h2 class="section-title">Related Products</h2>
         </div>
-
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-
             {% for item in related_products %}
-
-            <a href="{% url 'product_detail' item.slug %}" class="product-card group">
-
-                <div class="glass-card overflow-hidden">
-
-                    {% if item.primary_image %}
-
-                    <img src="{{ item.primary_image.image.url }}" alt="{{ item.name }}"
-                        class="aspect-square object-cover w-full transition-transform duration-500 group-hover:scale-105">
-
-                    {% endif %}
-
-                </div>
-
-                <div class="mt-4">
-
-                    <p class="text-xs uppercase tracking-[0.15em] text-gold">
-                        {{ item.category.name }}
-                    </p>
-
-                    <h3 class="font-serif text-xl text-brown mt-1">
-                        {{ item.name }}
-                    </h3>
-
-                    <p class="mt-2 text-brown">
-                        ₹{{ item.price }}
-                    </p>
-
-                </div>
-
-            </a>
-
+            <div class="product-card group relative">
+                <a href="{% url 'product_detail' item.slug %}">
+                    <div class="glass-card overflow-hidden">
+                        {% if item.primary_image %}
+                        <img src="{% product_image_url item.primary_image.image 'product_card' %}"
+                            alt="{{ item.name }}"
+                            class="aspect-square object-cover w-full transition-transform duration-500 group-hover:scale-105">
+                        {% endif %}
+                    </div>
+                    <h3 class="font-serif text-xl text-brown mt-4">{{ item.name }}</h3>
+                    <p class="text-gold mt-2">₹{{ item.discounted_price|default:item.price }}</p>
+                </a>
+                <button type="button" class="quick-view-btn" data-quick-view="{{ item.slug }}">Quick view</button>
+            </div>
             {% endfor %}
-
         </div>
-
     </div>
-
 </section>
+{% endif %}
 
+{% if variants_json %}
+{{ variants_json|json_script:"variants-data" }}
 {% endif %}
 
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/gallery.js' %}"></script>
+<script src="{% static 'js/share.js' %}"></script>
+{% if variants_json %}
+<script src="{% static 'js/variants.js' %}"></script>
+{% endif %}
 {% if can_review %}
 <script src="{% static 'js/reviews.js' %}"></script>
 {% endif %}

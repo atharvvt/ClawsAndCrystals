@@ -1,0 +1,45 @@
+{% load product_extras %}
+<div class="quick-view-content p-6 md:p-8">
+    <div class="grid md:grid-cols-2 gap-8">
+        <div>
+            {% if product.primary_image %}
+            <img src="{% product_image_url product.primary_image.image 'product_gallery' %}"
+                alt="{{ product.primary_image.alt_text|default:product.name }}"
+                class="w-full aspect-square object-cover rounded-xl">
+            {% endif %}
+        </div>
+
+        <div>
+            <span class="section-eyebrow">{{ product.category.name }}</span>
+            <h2 class="font-serif text-3xl text-brown mt-2">{{ product.name }}</h2>
+            <p class="text-2xl font-serif text-gold mt-4">₹{{ display_price }}</p>
+
+            <p class="text-muted mt-4 leading-relaxed font-light line-clamp-4">
+                {{ product.description|truncatewords:40 }}
+            </p>
+
+            <div class="flex flex-col gap-3 mt-8">
+                {% if is_in_stock %}
+                <a href="{% url 'add_to_cart' product.id %}{% if selected_variant %}?variant={{ selected_variant.id }}{% endif %}"
+                    class="btn-primary text-center">
+                    Add To Cart
+                </a>
+                {% else %}
+                <span class="text-red-500 text-sm">Out of stock</span>
+                {% endif %}
+
+                <a href="{% url 'product_detail' product.slug %}" class="btn-secondary text-center !text-xs">
+                    View Full Details
+                </a>
+
+                <form method="post" action="{% url 'compare_add' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="glass-card w-full py-2 text-sm text-brown"
+                        {% if in_compare or compare_full and not in_compare %}disabled{% endif %}>
+                        {% if in_compare %}In compare{% elif compare_full %}Compare full{% else %}Add to compare{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -12,6 +12,20 @@
         <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;text-align:right;font-weight:600;">#{{ order.id }}</td>
     </tr>
     <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;color:#9A8070;">Subtotal</td>
+        <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;text-align:right;">₹{{ order.subtotal_amount }}</td>
+    </tr>
+    {% if order.discount_amount %}
+    <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;color:#9A8070;">Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</td>
+        <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;text-align:right;color:#15803d;">-₹{{ order.discount_amount }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;color:#9A8070;">Shipping</td>
+        <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;text-align:right;">{% if order.shipping_amount %}₹{{ order.shipping_amount }}{% else %}Free{% endif %}</td>
+    </tr>
+    <tr>
         <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;color:#9A8070;">Total Paid</td>
         <td style="padding:12px 0;border-bottom:1px solid #F3ECE3;font-size:14px;text-align:right;font-weight:600;color:#C9A84C;">₹{{ order.total_amount }}</td>
     </tr>

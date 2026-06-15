@@ -25,33 +25,58 @@
         </div>
         {% endif %}
 
-        <div class="space-y-4">
-            {% for item in cart_items %}
-            <div class="glass-card p-5 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h3 class="font-serif text-xl text-brown">{{ item.product.name }}</h3>
-                    <p class="text-gold mt-1">₹{{ item.total_price }}</p>
-                    {% if item.quantity > item.product.stock %}
-                    <p class="form-error mt-1">Only {{ item.product.stock }} available</p>
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-4">
+                {% for item in cart_items %}
+                <div class="glass-card p-5 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h3 class="font-serif text-xl text-brown">{{ item.product.name }}</h3>
+                        {% if item.variant %}
+                        <p class="text-xs text-muted mt-1">{{ item.variant.display_label }}</p>
+                        {% endif %}
+                        <p class="text-gold mt-1">₹{{ item.total_price }}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'decrease_quantity' item.id %}" class="btn-secondary !py-2 !px-3" aria-label="Decrease quantity">−</a>
+                        <span class="min-w-[2rem] text-center font-medium">{{ item.quantity }}</span>
+                        <a href="{% url 'increase_quantity' item.id %}" class="btn-secondary !py-2 !px-3" aria-label="Increase quantity">+</a>
+                        <a href="{% url 'remove_from_cart' item.id %}" class="text-sm text-red-600 hover:underline ml-2">Remove</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="glass-card p-6 h-fit lg:sticky lg:top-28 space-y-6">
+                <h2 class="font-serif text-2xl text-brown">Order Summary</h2>
+                {% include "partials/order_totals.html" %}
+
+                <div class="pt-4 border-t border-gold/20">
+                    {% if coupon_code %}
+                    <p class="text-sm text-muted mb-3">Coupon <strong class="text-brown">{{ coupon_code }}</strong> applied.</p>
+                    <form method="post" action="{% url 'remove_coupon' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-sm text-gold hover:underline">Remove coupon</button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{% url 'apply_coupon' %}" class="flex gap-2">
+                        {% csrf_token %}
+                        <input type="text" name="coupon_code" placeholder="Coupon code" class="cc-input flex-1" required>
+                        <button type="submit" class="btn-secondary !text-xs !px-4">Apply</button>
+                    </form>
                     {% endif %}
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="{% url 'decrease_quantity' item.id %}" class="btn-secondary !py-2 !px-3" aria-label="Decrease quantity">−</a>
-                    <span class="min-w-[2rem] text-center font-medium">{{ item.quantity }}</span>
-                    <a href="{% url 'increase_quantity' item.id %}" class="btn-secondary !py-2 !px-3" aria-label="Increase quantity">+</a>
-                    <a href="{% url 'remove_from_cart' item.id %}" class="text-sm text-red-600 hover:underline ml-2">Remove</a>
+
+                <div class="pt-2">
+                    {% if stock_errors %}
+                    <span class="btn-primary is-disabled w-full text-center block">Proceed To Checkout</span>
+                    {% elif user.is_authenticated %}
+                    <a href="{% url 'checkout' %}" class="btn-primary w-full text-center block">Proceed To Checkout</a>
+                    {% else %}
+                    <a href="{% url 'login' %}?next={% url 'checkout' %}" class="btn-primary w-full text-center block">Sign In to Checkout</a>
+                    <p class="text-xs text-muted text-center mt-3">Your cart is saved while you browse.</p>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
-        </div>
-
-        <div class="glass-card p-6 mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h2 class="font-serif text-2xl text-brown">Total: <span class="text-gold">₹{{ total }}</span></h2>
-            {% if stock_errors %}
-            <span class="btn-primary is-disabled">Proceed To Checkout</span>
-            {% else %}
-            <a href="{% url 'checkout' %}" class="btn-primary">Proceed To Checkout</a>
-            {% endif %}
         </div>
 
         {% else %}

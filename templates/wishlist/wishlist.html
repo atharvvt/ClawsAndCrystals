@@ -1,90 +1,73 @@
 {% extends "base.html" %}
+{% load product_extras %}
 
-{% block title %}
-My Wishlist
-{% endblock %}
+{% block title %}My Wishlist{% endblock %}
 
 {% block content %}
 
 <section class="py-16 px-6 min-h-screen">
-
     <div class="max-w-7xl mx-auto">
-
-        <div class="section-header mb-12">
-
-            <span class="section-eyebrow">
-                Favorites
-            </span>
-
-            <h1 class="section-title">
-                My Wishlist
-            </h1>
-
-        </div>
-
-        {% if items %}
-
-        <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
-
-            {% for item in items %}
-
-            <div class="product-card">
-
-                <a href="{% url 'product_detail' item.product.slug %}">
-
-                    {% if item.product.primary_image %}
-                    <div class="glass-card overflow-hidden">
-
-                        <img
-                            src="{{ item.product.primary_image.image.url }}"
-                            alt="{{ item.product.name }}"
-                            class="aspect-square object-cover w-full"
-                        >
-
-                    </div>
-                    {% endif %}
-
-                    <h3 class="mt-4 font-serif text-xl text-brown">
-                        {{ item.product.name }}
-                    </h3>
-
-                    <p class="text-gold">
-                        ₹{{ item.product.price }}
-                    </p>
-
-                </a>
-
-                <a
-                    href="{% url 'toggle_wishlist' item.product.id %}"
-                    class="text-sm text-red-500 mt-2 inline-block"
-                >
-                    Remove
-                </a>
-
+        <div class="section-header mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+                <span class="section-eyebrow">Favorites</span>
+                <h1 class="section-title">My Wishlist</h1>
             </div>
-
-            {% endfor %}
-
+            {% if items %}
+            <div class="flex flex-wrap gap-3">
+                <form method="post" action="{% url 'wishlist_add_all_to_cart' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-primary !text-xs">Add all to cart</button>
+                </form>
+                <form method="post" action="{% url 'wishlist_share_generate' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-secondary !text-xs">Generate share link</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
 
-        {% else %}
-
-        <div class="text-center py-20">
-
-            <h3 class="text-2xl font-serif text-brown">
-                Your wishlist is empty
-            </h3>
-
-            <p class="text-muted mt-2">
-                Save products you love and view them later.
-            </p>
-
+        {% if share_url %}
+        <div class="glass-card p-4 mb-8 flex flex-col sm:flex-row sm:items-center gap-3">
+            <span class="text-sm text-muted">Share your wishlist:</span>
+            <input type="text" readonly value="{{ share_url }}" class="cc-input flex-1" id="wishlist-share-url">
+            <button type="button" class="btn-secondary !text-xs" onclick="navigator.clipboard.writeText(document.getElementById('wishlist-share-url').value)">Copy</button>
         </div>
-
         {% endif %}
 
+        {% if items %}
+        <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {% for item in items %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' item.product.slug %}">
+                    {% if item.product.primary_image %}
+                    <div class="glass-card overflow-hidden">
+                        <img src="{% product_image_url item.product.primary_image.image 'product_card' %}"
+                            alt="{{ item.product.name }}" class="aspect-square object-cover w-full">
+                    </div>
+                    {% endif %}
+                    <h3 class="mt-4 font-serif text-xl text-brown">{{ item.product.name }}</h3>
+                    <p class="text-gold">₹{{ item.product.discounted_price|default:item.product.price }}</p>
+                </a>
+                <div class="flex flex-wrap gap-3 mt-3">
+                    <form method="post" action="{% url 'wishlist_add_to_cart' item.product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary !text-xs">Move to cart</button>
+                    </form>
+                    <form method="post" action="{% url 'toggle_wishlist' item.product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-sm text-red-500">Remove</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20">
+            <h3 class="text-2xl font-serif text-brown">Your wishlist is empty</h3>
+            <p class="text-muted mt-2">Save products you love and view them later.</p>
+        </div>
+        {% endif %}
     </div>
-
 </section>
 
 {% endblock %}

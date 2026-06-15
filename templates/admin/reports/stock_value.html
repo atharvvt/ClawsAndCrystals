@@ -1,0 +1,72 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="cc-report">
+    <h1>{{ title }}</h1>
+    <p class="cc-report__summary">
+        Total inventory value:
+        <strong>₹{{ grand_total }}</strong>
+        (products: ₹{{ product_total }}, variants: ₹{{ variant_total }})
+    </p>
+
+    <h2>Products</h2>
+    <table class="cc-admin-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Status</th>
+                <th>Stock</th>
+                <th>Unit price</th>
+                <th>Line value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in product_rows %}
+            <tr>
+                <td><a href="{% url 'admin:products_product_change' row.id %}">{{ row.name }}</a></td>
+                <td>{{ row.get_status_display }}</td>
+                <td>{{ row.stock }}</td>
+                <td>₹{{ row.unit_price }}</td>
+                <td>₹{{ row.line_value }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No products found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Variants</h2>
+    <table class="cc-admin-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Variant</th>
+                <th>Stock</th>
+                <th>Unit price</th>
+                <th>Line value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in variant_rows %}
+            <tr>
+                <td><a href="{% url 'admin:products_product_change' row.product_id %}">{{ row.product.name }}</a></td>
+                <td>{{ row.metal }} {{ row.size }} {{ row.stone_color }}</td>
+                <td>{{ row.stock }}</td>
+                <td>₹{{ row.unit_price }}</td>
+                <td>₹{{ row.line_value }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No variant stock on hand.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -71,29 +71,26 @@ Payment — Order #{{ order.id }}
 
                 </div>
 
-                <div class="mt-6 pt-6 border-t border-gold/20">
-
-                    <div class="flex justify-between mb-4">
-
-                        <span class="text-brown">Shipping to</span>
-                        <span class="text-sm text-muted text-right">
-                            {{ order.city }}, {{ order.state }}
-                        </span>
-
+                <div class="mt-6 pt-6 border-t border-gold/20 space-y-2 text-sm">
+                    <div class="flex justify-between text-brown">
+                        <span>Subtotal</span>
+                        <span>₹{{ order.subtotal_amount }}</span>
                     </div>
-
-                    <div class="flex justify-between">
-
-                        <span class="font-serif text-xl text-brown">
-                            Total
-                        </span>
-
-                        <span class="font-serif text-xl text-gold">
-                            ₹{{ order.total_amount }}
-                        </span>
-
+                    {% if order.discount_amount %}
+                    <div class="flex justify-between text-green-700">
+                        <span>Discount{% if order.coupon_code %} ({{ order.coupon_code }}){% endif %}</span>
+                        <span>-₹{{ order.discount_amount }}</span>
                     </div>
-
+                    {% endif %}
+                    <div class="flex justify-between text-brown">
+                        <span>Shipping</span>
+                        <span>{% if order.shipping_amount %}₹{{ order.shipping_amount }}{% else %}Free{% endif %}</span>
+                    </div>
+                    <div class="flex justify-between font-medium text-brown pt-2 border-t border-gold/20">
+                        <span>Total</span>
+                        <span class="text-gold">₹{{ order.total_amount }}</span>
+                    </div>
+                    <p class="text-xs text-muted pt-2">Shipping to {{ order.city }}, {{ order.state }}</p>
                 </div>
 
             </div>

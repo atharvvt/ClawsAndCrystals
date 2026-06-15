@@ -90,10 +90,13 @@
                     </div>
                     {% endfor %}
                 </div>
-                <div class="mt-6 pt-6 border-t border-gold/20 flex justify-between">
-                    <span class="font-serif text-xl text-brown">Total</span>
-                    <span class="font-serif text-xl text-gold">₹{{ total }}</span>
+                <div class="mt-6 pt-6 border-t border-gold/20">
+                    {% include "partials/order_totals.html" %}
                 </div>
+
+                {% if coupon_code %}
+                <p class="text-xs text-muted mt-4">Coupon {{ coupon_code }} applied.</p>
+                {% endif %}
             </div>
 
         </div>

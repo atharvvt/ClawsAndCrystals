@@ -1,0 +1,23 @@
+<div class="space-y-2 text-sm">
+    <div class="flex justify-between text-brown">
+        <span>Subtotal</span>
+        <span>₹{{ totals.subtotal_amount }}</span>
+    </div>
+    {% if totals.discount_amount %}
+    <div class="flex justify-between text-green-700">
+        <span>Discount{% if totals.coupon_code %} ({{ totals.coupon_code }}){% endif %}</span>
+        <span>-₹{{ totals.discount_amount }}</span>
+    </div>
+    {% endif %}
+    <div class="flex justify-between text-brown">
+        <span>Shipping</span>
+        <span>{% if totals.shipping_amount %}₹{{ totals.shipping_amount }}{% else %}Free{% endif %}</span>
+    </div>
+    {% if totals.shipping_label %}
+    <p class="text-xs text-muted">{{ totals.shipping_label }}</p>
+    {% endif %}
+    <div class="flex justify-between font-medium text-brown pt-2 border-t border-gold/20">
+        <span>Total</span>
+        <span class="text-gold">₹{{ totals.total_amount }}</span>
+    </div>
+</div>

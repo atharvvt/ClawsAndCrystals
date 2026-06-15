@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Claws &amp; Crystals — Admin</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div class="cc-admin-nav">
+    <a href="{% url 'admin:stock_value_report' %}">Stock report</a>
+    <a href="{% url 'admin:best_sellers_report' %}">Best sellers</a>
+</div>
+{% endblock %}

@@ -20,6 +20,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+import config.admin  # noqa: F401 — custom admin dashboard and reports
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),

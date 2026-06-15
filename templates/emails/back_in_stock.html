@@ -1,0 +1,16 @@
+{% extends "emails/base_email.html" %}
+
+{% block email_content %}
+<p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
+    Good news! <strong>{{ product.name }}</strong> is back in stock.
+</p>
+{% if variant_label %}
+<p style="margin:0 0 24px;font-size:14px;color:#9A8070;">Variant: {{ variant_label }}</p>
+{% endif %}
+<p style="margin:32px 0 0;text-align:center;">
+    <a href="{{ product_url }}"
+        style="display:inline-block;background:#C9A84C;color:#FAF7F2;padding:14px 32px;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;">
+        Shop Now
+    </a>
+</p>
+{% endblock %}

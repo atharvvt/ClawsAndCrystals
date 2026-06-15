@@ -1,0 +1,9 @@
+Good news — {{ product.name }} is back in stock!
+
+{% if variant_label %}
+Variant: {{ variant_label }}
+{% endif %}
+
+Shop now: {{ product_url }}
+
+— {{ site_name }}

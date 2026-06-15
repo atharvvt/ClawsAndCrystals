@@ -1,4 +1,4 @@
-<nav class="site-nav sticky top-0 z-50" id="site-nav">
+<nav class="site-nav sticky top-0 z-50" id="site-nav" aria-label="Main navigation">
     <div class="page-container py-4">
         <div class="flex items-center justify-between gap-4">
 
@@ -15,10 +15,20 @@
             </ul>
 
             <div class="hidden lg:flex items-center gap-5">
-                <form method="GET" action="{% url 'product_list' %}">
-                    <input type="text" name="q" placeholder="Search jewellery..."
-                        value="{{ request.GET.q }}" class="search-input">
-                </form>
+                <div class="relative" data-search-wrapper>
+                    <form method="GET" action="{% url 'product_list' %}" role="search">
+                        <input type="text" name="q" placeholder="Search jewellery..."
+                            value="{{ request.GET.q }}" class="search-input"
+                            data-search-input
+                            role="combobox"
+                            aria-label="Search products"
+                            aria-expanded="false"
+                            aria-autocomplete="list"
+                            autocomplete="off">
+                    </form>
+                    <div class="search-dropdown hidden glass-card absolute top-full left-0 right-0 mt-1 z-50"
+                        data-search-dropdown role="listbox"></div>
+                </div>
 
                 <a href="{% url 'wishlist' %}" class="nav-link flex items-center gap-2">
                     Wishlist
@@ -52,7 +62,8 @@
             </div>
 
             <button type="button" class="lg:hidden text-brown p-2 -mr-2"
-                id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-nav">
+                id="mobile-menu-toggle" aria-expanded="false" aria-controls="mobile-nav"
+                aria-label="Open menu">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -61,10 +72,20 @@
         </div>
 
         <div class="mobile-nav lg:hidden" id="mobile-nav">
-            <form method="GET" action="{% url 'product_list' %}" class="mb-3">
-                <input type="text" name="q" placeholder="Search jewellery..."
-                    value="{{ request.GET.q }}" class="search-input !max-w-none">
-            </form>
+            <div class="relative mb-3" data-search-wrapper>
+                <form method="GET" action="{% url 'product_list' %}" role="search">
+                    <input type="text" name="q" placeholder="Search jewellery..."
+                        value="{{ request.GET.q }}" class="search-input !max-w-none"
+                        data-search-input
+                        role="combobox"
+                        aria-label="Search products"
+                        aria-expanded="false"
+                        aria-autocomplete="list"
+                        autocomplete="off">
+                </form>
+                <div class="search-dropdown hidden glass-card absolute top-full left-0 right-0 mt-1 z-50"
+                    data-search-dropdown role="listbox"></div>
+            </div>
             <a href="/" class="mobile-nav__link">Home</a>
             <a href="{% url 'product_list' %}" class="mobile-nav__link">Shop</a>
             <a href="{% url 'about' %}" class="mobile-nav__link">About</a>

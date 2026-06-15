@@ -8,8 +8,19 @@ Django e-commerce site for handcrafted Indian jewellery.
 python3 -m pip install -r requirements.txt
 cp .env.example .env
 python3 manage.py migrate
+python3 manage.py seed_homepage
 python3 manage.py runserver
 ```
+
+### Frontend CSS (Tailwind)
+
+Tailwind is built locally (not loaded from CDN). After changing templates or `tailwind.config.js`:
+
+```bash
+npm install && npm run build:css
+```
+
+Output is written to `static/css/tailwind.css`.
 
 ## Razorpay payment setup (test mode)
 

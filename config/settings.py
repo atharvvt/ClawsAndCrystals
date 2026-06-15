@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "cart",
     "reviews",
+    "shipping",
+    "promotions",
+    "easy_thumbnails",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -89,6 +92,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "cart.context_processors.navbar_counts",
+                "products.context_processors.compare_context",
             ],
         },
     },
@@ -184,3 +188,11 @@ ADMINS = [
 
 # Password reset links
 PASSWORD_RESET_TIMEOUT = 3600
+
+THUMBNAIL_ALIASES = {
+    "": {
+        "product_card": {"size": (400, 400), "crop": True},
+        "product_gallery": {"size": (800, 800), "crop": True},
+        "product_thumb": {"size": (120, 120), "crop": True},
+    },
+}

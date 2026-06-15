@@ -8,31 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/design-tokens.css' %}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        /* Tailwind reads the same tokens as CSS — change colors in design-tokens.css */
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        ivory:       'var(--cc-ivory)',
-                        cream:       'var(--cc-cream)',
-                        blush:       'var(--cc-blush)',
-                        gold:        'var(--cc-accent)',
-                        'gold-light':'var(--cc-accent-light)',
-                        brown:       'var(--cc-brown)',
-                        'brown-mid': 'var(--cc-brown-mid)',
-                        muted:       'var(--cc-muted)',
-                    },
-                    fontFamily: {
-                        serif: ['var(--cc-font-serif)'],
-                        sans:  ['var(--cc-font-sans)'],
-                    },
-                    backdropBlur: { xs: '4px' },
-                },
-            },
-        };
-    </script>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>{% block title %}Claws & Crystals{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Handcrafted Indian jewellery — Claws & Crystals{% endblock %}">
@@ -40,16 +16,34 @@
 </head>
 <body class="bg-ivory text-brown font-sans antialiased min-h-screen flex flex-col">
 
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
     {% include 'partials/navbar.html' %}
     {% include 'partials/messages.html' %}
 
-    <main class="flex-1">
+    <main id="main-content" class="flex-1">
         {% block content %}{% endblock %}
     </main>
 
     {% include 'partials/footer.html' %}
 
+    {% if compare_count %}
+    <div class="compare-bar" id="compare-bar">
+        <span class="text-sm text-brown">{{ compare_count }} item{{ compare_count|pluralize }} to compare</span>
+        <a href="{% url 'compare_products' %}" class="btn-secondary !text-xs">Compare now</a>
+    </div>
+    {% endif %}
+
+    <div id="quick-view-modal" class="quick-view-modal hidden" aria-hidden="true" role="dialog" aria-labelledby="quick-view-title">
+        <div class="quick-view-modal__panel glass-card">
+            <button type="button" id="quick-view-close" class="quick-view-modal__close" aria-label="Close quick view">&times;</button>
+            <div id="quick-view-body"></div>
+        </div>
+    </div>
+
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script>
+    <script src="{% static 'js/quick-view.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

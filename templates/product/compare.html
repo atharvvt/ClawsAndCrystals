@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load product_extras %}
+
+{% block title %}Compare Products — Claws & Crystals{% endblock %}
+
+{% block content %}
+
+<section class="py-16 px-6 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <div class="section-header mb-12">
+            <span class="section-eyebrow">Compare</span>
+            <h1 class="section-title">Compare Products</h1>
+        </div>
+
+        {% if products %}
+        <div class="overflow-x-auto">
+            <table class="w-full glass-card text-left">
+                <thead>
+                    <tr class="border-b border-gold/10">
+                        <th class="p-4 text-muted font-normal">Feature</th>
+                        {% for product in products %}
+                        <th class="p-4">
+                            <a href="{% url 'product_detail' product.slug %}" class="font-serif text-brown hover:text-gold">
+                                {{ product.name }}
+                            </a>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-gold/10">
+                        <td class="p-4 text-muted">Image</td>
+                        {% for product in products %}
+                        <td class="p-4">
+                            {% if product.primary_image %}
+                            <img src="{% product_image_url product.primary_image.image 'product_thumb' %}"
+                                alt="{{ product.name }}" class="w-24 h-24 object-cover rounded-lg">
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    <tr class="border-b border-gold/10">
+                        <td class="p-4 text-muted">Price</td>
+                        {% for product in products %}
+                        <td class="p-4 text-gold">₹{{ product.discounted_price|default:product.price }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr class="border-b border-gold/10">
+                        <td class="p-4 text-muted">Material</td>
+                        {% for product in products %}
+                        <td class="p-4 text-brown">{{ product.material|default:"—" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr class="border-b border-gold/10">
+                        <td class="p-4 text-muted">Weight</td>
+                        {% for product in products %}
+                        <td class="p-4 text-brown">{{ product.weight|default:"—" }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr class="border-b border-gold/10">
+                        <td class="p-4 text-muted">Stock</td>
+                        {% for product in products %}
+                        <td class="p-4 {% if product.stock > 0 %}text-green-600{% else %}text-red-500{% endif %}">
+                            {% if product.stock > 0 %}In stock{% else %}Out of stock{% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="p-4 text-muted">Actions</td>
+                        {% for product in products %}
+                        <td class="p-4">
+                            <a href="{% url 'product_detail' product.slug %}" class="btn-secondary !text-xs inline-block mb-2">View</a>
+                            <form method="post" action="{% url 'compare_remove' product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-sm text-red-500">Remove</button>
+                            </form>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3 class="empty-state__title">No products to compare</h3>
+            <p class="empty-state__text">Add up to 3 products from the shop to compare side by side.</p>
+            <a href="{% url 'product_list' %}" class="btn-primary mt-8 inline-block">Browse Products</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

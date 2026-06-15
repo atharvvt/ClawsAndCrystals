@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load product_extras %}
 
 {% block title %}
 {% if category %}
@@ -14,9 +15,7 @@ Shop — Claws & Crystals
 
     {% if category %}
 
-    <span class="section-eyebrow">
-        Category
-    </span>
+    <span class="section-eyebrow">Category</span>
 
     <h1 class="font-serif text-5xl md:text-6xl font-semibold text-brown mt-2">
         {{ category.name }}
@@ -30,9 +29,7 @@ Shop — Claws & Crystals
 
     {% else %}
 
-    <span class="section-eyebrow">
-        Explore
-    </span>
+    <span class="section-eyebrow">Explore</span>
 
     <h1 class="font-serif text-5xl md:text-6xl font-semibold text-brown mt-2">
         Our Collection
@@ -53,9 +50,25 @@ Shop — Claws & Crystals
         {% if query %}
         <div class="text-center mb-8">
             <p class="text-muted">
-                Showing results for
+                {{ result_count }} result{{ result_count|pluralize }} for
                 <span class="text-brown font-medium">"{{ query }}"</span>
             </p>
+        </div>
+        {% endif %}
+
+        {% if recently_viewed %}
+        <div class="mb-12">
+            <h2 class="font-serif text-2xl text-brown mb-4">Recently Viewed</h2>
+            <div class="flex gap-4 overflow-x-auto pb-2">
+                {% for item in recently_viewed %}
+                <a href="{% url 'product_detail' item.slug %}" class="shrink-0 w-36">
+                    {% if item.primary_image %}
+                    <img src="{% product_image_url item.primary_image.image 'product_thumb' %}" alt="{{ item.name }}" class="w-36 h-36 object-cover rounded-lg">
+                    {% endif %}
+                    <p class="text-sm text-brown mt-2 truncate">{{ item.name }}</p>
+                </a>
+                {% endfor %}
+            </div>
         </div>
         {% endif %}
 
@@ -132,28 +145,31 @@ Shop — Claws & Crystals
         {% if products %}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {% for product in products %}
-            <a href="{% url 'product_detail' product.slug %}" class="product-card group">
-                <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 bg-blush">
-                    {% if product.primary_image %}
-                    <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}"
-                        class="product-card__image w-full h-full object-cover">
+            <div class="product-card group relative">
+                <a href="{% url 'product_detail' product.slug %}">
+                    <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 bg-blush">
+                        {% if product.primary_image %}
+                        <img src="{% product_image_url product.primary_image.image 'product_card' %}" alt="{{ product.name }}"
+                            class="product-card__image w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">◈</div>
+                        {% endif %}
+                    </div>
+                    <p class="font-serif text-lg text-brown font-medium leading-tight">{{ product.name|highlight_search:query }}</p>
+                    {% if product.discounted_price %}
+                    <div class="mt-1 flex items-center gap-2">
+                        <span class="text-gold font-medium">₹{{ product.discounted_price }}</span>
+                        <span class="text-muted line-through text-sm">₹{{ product.price }}</span>
+                    </div>
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-muted/30 text-5xl">◈</div>
+                    <p class="text-gold text-sm font-sans mt-1">₹{{ product.price }}</p>
                     {% endif %}
-                </div>
-                <p class="font-serif text-lg text-brown font-medium leading-tight">{{ product.name }}</p>
-                {% if product.discounted_price %}
-                <div class="mt-1 flex items-center gap-2">
-                    <span class="text-gold font-medium">₹{{ product.discounted_price }}</span>
-                    <span class="text-muted line-through text-sm">₹{{ product.price }}</span>
-                </div>
-                {% else %}
-                <p class="text-gold text-sm font-sans mt-1">₹{{ product.price }}</p>
-                {% endif %}
-                <span class="inline-block mt-3 text-xs uppercase tracking-wider text-muted border-b border-muted/30 pb-px group-hover:text-gold group-hover:border-gold transition-colors duration-300">
-                    View Details →
-                </span>
-            </a>
+                    <span class="inline-block mt-3 text-xs uppercase tracking-wider text-muted border-b border-muted/30 pb-px group-hover:text-gold group-hover:border-gold transition-colors duration-300">
+                        View Details →
+                    </span>
+                </a>
+                <button type="button" class="quick-view-btn" data-quick-view="{{ product.slug }}">Quick view</button>
+            </div>
             {% endfor %}
         </div>
 
@@ -177,6 +193,12 @@ Shop — Claws & Crystals
 
         {% else %}
         <div class="empty-state">
+            {% if did_you_mean %}
+            <p class="text-muted mb-4">
+                Did you mean
+                <a href="?q={{ did_you_mean }}" class="text-gold hover:underline">{{ did_you_mean }}</a>?
+            </p>
+            {% endif %}
             <h3 class="empty-state__title">No products found</h3>
             <p class="empty-state__text">Try adjusting your filters or browse another category.</p>
             <a href="{% url 'product_list' %}" class="btn-primary mt-8 inline-block">View All Products</a>

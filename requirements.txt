@@ -3,3 +3,4 @@ razorpay>=1.4.0
 python-dotenv>=1.0.0
 Pillow>=10.0.0
 certifi>=2024.0.0
+easy-thumbnails>=2.8.5

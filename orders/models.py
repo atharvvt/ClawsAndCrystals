@@ -36,9 +36,20 @@ class Order(models.Model):
     state = models.CharField(max_length=100)
     pincode = models.CharField(max_length=20)
 
+    subtotal_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    shipping_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2
+    )
+    coupon_code = models.CharField(max_length=50, blank=True)
+    applied_coupon = models.ForeignKey(
+        "promotions.Coupon",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="orders",
     )
 
     status = models.CharField(
@@ -81,7 +92,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id}"
-    
+
 
 class OrderItem(models.Model):
 
@@ -95,6 +106,16 @@ class OrderItem(models.Model):
         Product,
         on_delete=models.CASCADE
     )
+
+    variant = models.ForeignKey(
+        "products.ProductVariant",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="order_items",
+    )
+
+    variant_label = models.CharField(max_length=255, blank=True)
 
     quantity = models.PositiveIntegerField()
 

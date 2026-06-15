@@ -1,0 +1,103 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cc-admin-dashboard">
+    <div class="cc-admin-cards">
+        <div class="cc-admin-card">
+            <span class="cc-admin-card__label">Revenue today</span>
+            <span class="cc-admin-card__value">₹{{ dashboard_revenue_today }}</span>
+        </div>
+        <div class="cc-admin-card">
+            <span class="cc-admin-card__label">Revenue this month</span>
+            <span class="cc-admin-card__value">₹{{ dashboard_revenue_month }}</span>
+        </div>
+        <div class="cc-admin-card cc-admin-card--warn">
+            <span class="cc-admin-card__label">Pending shipment</span>
+            <span class="cc-admin-card__value">{{ dashboard_pending_shipment }}</span>
+            <a href="{% url 'admin:orders_order_changelist' %}?payment_status__exact=paid&amp;status__in=pending,processing" class="cc-admin-card__link">View orders</a>
+        </div>
+        <div class="cc-admin-card cc-admin-card--alert">
+            <span class="cc-admin-card__label">Unpaid orders</span>
+            <span class="cc-admin-card__value">{{ dashboard_unpaid_orders }}</span>
+            <a href="{% url 'admin:orders_order_changelist' %}?payment_status__exact=unpaid" class="cc-admin-card__link">View orders</a>
+        </div>
+    </div>
+
+    <div class="cc-admin-panels">
+        <section class="cc-admin-panel">
+            <h2>Low stock (≤ {{ dashboard_low_stock_threshold }})</h2>
+            {% if dashboard_low_stock_products %}
+            <table class="cc-admin-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in dashboard_low_stock_products %}
+                    <tr>
+                        <td><a href="{% url 'admin:products_product_change' product.id %}">{{ product.name }}</a></td>
+                        <td><span class="cc-badge cc-badge--alert">{{ product.stock }}</span></td>
+                        <td>₹{{ product.effective_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'admin:products_product_changelist' %}?stock__lte={{ dashboard_low_stock_threshold }}" class="cc-admin-panel__link">View all low stock</a>
+            {% else %}
+            <p class="cc-admin-empty">All published products are above the low-stock threshold.</p>
+            {% endif %}
+        </section>
+
+        <section class="cc-admin-panel">
+            <h2>Reports</h2>
+            <ul class="cc-admin-links">
+                <li><a href="{% url 'admin:stock_value_report' %}">Stock value report</a></li>
+                <li><a href="{% url 'admin:best_sellers_report' %}">Best sellers</a></li>
+            </ul>
+        </section>
+
+        <section class="cc-admin-panel cc-admin-panel--wide">
+            <h2>Recent orders</h2>
+            {% if dashboard_recent_orders %}
+            <table class="cc-admin-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Total</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in dashboard_recent_orders %}
+                    <tr>
+                        <td><a href="{% url 'admin:orders_order_change' order.id %}">#{{ order.id }}</a></td>
+                        <td>{{ order.full_name }}</td>
+                        <td><span class="cc-badge cc-badge--{{ order.status }}">{{ order.get_status_display }}</span></td>
+                        <td><span class="cc-badge cc-badge--{{ order.payment_status }}">{{ order.get_payment_status_display }}</span></td>
+                        <td>₹{{ order.total_amount }}</td>
+                        <td>{{ order.created_at|date:"M j, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="cc-admin-empty">No orders yet.</p>
+            {% endif %}
+        </section>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}
