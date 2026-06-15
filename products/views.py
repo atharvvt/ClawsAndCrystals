@@ -217,7 +217,6 @@ def _product_detail_context(request, product):
     is_in_stock = display_stock > 0
 
     variant_options = {
-        "metals": sorted({v.metal for v in variants if v.metal}),
         "sizes": sorted({v.size for v in variants if v.size}),
         "stone_colors": sorted({v.stone_color for v in variants if v.stone_color}),
     }

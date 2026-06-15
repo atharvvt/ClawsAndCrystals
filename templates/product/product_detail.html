@@ -78,19 +78,8 @@
                     <span class="text-3xl font-serif text-gold" id="display-price">₹{{ display_price }}</span>
                 </div>
 
-                {% if variants %}
+                {% if variant_options.sizes or variant_options.stone_colors %}
                 <div class="glass-card p-6 mt-8 space-y-4" id="variant-selectors">
-                    {% if variant_options.metals %}
-                    <div class="form-field">
-                        <label class="form-label" for="variant-metal">Metal</label>
-                        <select id="variant-metal" class="cc-select variant-select" data-field="metal">
-                            <option value="">Select metal</option>
-                            {% for value in variant_options.metals %}
-                            <option value="{{ value }}" {% if selected_variant.metal == value %}selected{% endif %}>{{ value }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% endif %}
                     {% if variant_options.sizes %}
                     <div class="form-field">
                         <label class="form-label" for="variant-size">Size</label>
@@ -124,13 +113,6 @@
                 </div>
 
                 <div class="glass-card p-6 mt-8 space-y-4">
-                    {% if product.material %}
-                    <div class="flex justify-between">
-                        <span class="text-muted">Material</span>
-                        <span class="text-brown">{{ product.material }}</span>
-                    </div>
-                    {% endif %}
-
                     {% if product.weight %}
                     <div class="flex justify-between">
                         <span class="text-muted">Weight</span>
