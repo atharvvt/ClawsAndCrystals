@@ -1,0 +1,59 @@
+/**
+ * Claws & Crystals Design System
+ * =================================
+ * Change colors and fonts HERE to retheme the entire site.
+ * Tokens flow into Tailwind utilities (base.html) and component CSS (style.css).
+ */
+
+:root {
+    /* Typography */
+    --cc-font-serif: "Cormorant Garamond", Georgia, serif;
+    --cc-font-sans: "Inter", system-ui, sans-serif;
+
+    /* Brand palette */
+    --cc-ivory: #FAF7F2;
+    --cc-cream: #F3ECE3;
+    --cc-blush: #E8D5C4;
+    --cc-accent: #C9A84C;
+    --cc-accent-light: #E8D499;
+    --cc-accent-hover: #3D1F0D;
+    --cc-brown: #3D1F0D;
+    --cc-brown-mid: #6F4E37;
+    --cc-muted: #9A8070;
+    --cc-white: #FFFFFF;
+
+    /* Semantic colors */
+    --cc-bg: var(--cc-ivory);
+    --cc-bg-subtle: var(--cc-cream);
+    --cc-text: var(--cc-brown);
+    --cc-text-secondary: var(--cc-brown-mid);
+    --cc-text-muted: var(--cc-muted);
+    --cc-text-on-accent: var(--cc-ivory);
+    --cc-text-on-dark: var(--cc-blush);
+    --cc-danger: #b91c1c;
+    --cc-success: #15803d;
+    --cc-warning: #b45309;
+
+    /* Surfaces */
+    --cc-surface: rgba(255, 255, 255, 0.55);
+    --cc-surface-solid: rgba(255, 255, 255, 0.85);
+    --cc-surface-dark: var(--cc-brown);
+    --cc-border: rgba(201, 168, 76, 0.18);
+    --cc-border-strong: rgba(201, 168, 76, 0.35);
+    --cc-input-bg: rgba(250, 247, 242, 0.8);
+    --cc-nav-bg: rgba(250, 247, 242, 0.88);
+
+    /* Effects */
+    --cc-radius-sm: 0.5rem;
+    --cc-radius-md: 1rem;
+    --cc-radius-pill: 9999px;
+    --cc-shadow-soft: 0 8px 40px rgba(61, 31, 13, 0.08);
+    --cc-shadow-focus: 0 0 0 3px rgba(201, 168, 76, 0.15);
+    --cc-blur: 16px;
+    --cc-transition: 0.25s ease;
+
+    /* Spacing scale */
+    --cc-space-page: 1.5rem;
+    --cc-space-section: 4rem;
+    --cc-container: 80rem;
+}
