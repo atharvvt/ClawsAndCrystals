@@ -25,10 +25,10 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-po_sgb^lgh0%frl^$yuas@256&6gp0m-4%4n&o!c68r8bsvje("
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 import os
 
@@ -49,6 +49,11 @@ CSRF_TRUSTED_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
+
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)
 
 CSRF_FAILURE_VIEW = "config.csrf.csrf_failure"
 
@@ -112,7 +117,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
@@ -168,7 +173,7 @@ RAZORPAY_WEBHOOK_SECRET = os.environ.get("RAZORPAY_WEBHOOK_SECRET", "")
 
 # Site
 SITE_NAME = os.environ.get("SITE_NAME", "Claws & Crystals")
-SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000").rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://clawsandcrystals.onrender.com").rstrip("/")
 
 # Email — uses console backend in dev when SMTP is not configured
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
@@ -201,3 +206,9 @@ THUMBNAIL_ALIASES = {
         "product_thumb": {"size": (120, 120), "crop": True},
     },
 }
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
